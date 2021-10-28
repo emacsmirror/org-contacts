@@ -327,7 +327,7 @@ cell corresponding to the contact properties.
 	     if (or
 		 (and name-match
 		      (string-match-p name-match
-					  (first contact)))
+					  (cl-first contact)))
 		 (and prop-match
 		      (cl-find-if (lambda (prop)
 				     (and (string= (car prop-match) (car prop))
@@ -369,7 +369,7 @@ prefixes rather than just the beginning of the string."
 		    (cl-return t)
 		  (cl-destructuring-bind (string start end)
 		      (if (null ret)
-			  (values string start end)
+			  (cl-values string start end)
 			(org-contacts-common-substring
 			 ret ret-start ret-end
 			 string start end))
@@ -456,7 +456,7 @@ prefixes rather than just the beginning of the string."
 
 (defun org-contacts-make-collection-prefix (collection)
   "Make a collection function from COLLECTION which will match on prefixes."
-  (lexical-let ((collection collection))
+  (let ((collection collection))
     (lambda (string predicate flag)
       (cond ((eq flag nil)
 	     (org-contacts-try-completion-prefix string collection predicate))
@@ -502,7 +502,7 @@ prefixes rather than just the beginning of the string."
 	      collection))
 
 (defun org-contacts-boundaries-prefix (string collection predicate suffix)
-  (list* 'boundaries (completion-boundaries string collection predicate suffix)))
+  (cl-list* 'boundaries (completion-boundaries string collection predicate suffix)))
 
 (defun org-contacts-metadata-prefix (string collection predicate)
   '(metadata .
@@ -530,7 +530,7 @@ A group FOO is composed of contacts with the tag FOO."
 	(list start end
 	      (if (= (length completion-list) 1)
 		  ;; We've found the correct group, returns the address
-		  (lexical-let ((tag (get-text-property 0 'org-contacts-group
+		  (let ((tag (get-text-property 0 'org-contacts-group
 							(car completion-list))))
 		    (lambda (string pred &optional to-ignore)
 		      (mapconcat 'identity
@@ -590,7 +590,7 @@ description."
 	      ",")))
 	(when (not (string= "" result))
 	  ;; return (start end function)
-	  (lexical-let* ((to-return result))
+	  (let* ((to-return result))
 	    (list start end
 		  (lambda (string pred &optional to-ignore) to-return))))))))
 
@@ -643,7 +643,7 @@ description."
   (let ((mail-abbrev-mode-regexp
          "^\\(Resent-To\\|To\\|B?Cc\\|Reply-To\\|From\\|Mail-Followup-To\\|Mail-Copies-To\\|Disposition-Notification-To\\|Return-Receipt-To\\):"))
     (when (mail-abbrev-in-expansion-header-p)
-      (lexical-let*
+      (let*
 	  ((end (point))
 	   (start (or start
 		      (save-excursion
@@ -748,8 +748,8 @@ This function should be called from `gnus-article-prepare-hook'."
       (with-current-buffer (marker-buffer marker)
         (save-excursion
           (goto-char marker)
-          (let* ((org-email-link-description-format (or org-contacts-email-link-description-format
-                                                        org-email-link-description-format))
+          (let* ((org-link-email-description-format (or org-contacts-email-link-description-format
+                                                        org-link-email-description-format))
                  (link (gnus-with-article-buffer (org-store-link nil))))
             (org-set-property org-contacts-last-read-mail-property link)))))))
 
@@ -1169,7 +1169,7 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
     (if (bound-and-true-p org-id-link-to-org-use-id)
 	(org-id-store-link)
       (let ((headline-str (substring-no-properties (org-get-heading t t t t))))
-	(org-store-link-props
+	(org-link-store-props
 	 :type "org-contact"
 	 :link headline-str
 	 :description headline-str)
