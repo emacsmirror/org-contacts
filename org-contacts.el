@@ -502,7 +502,7 @@ prefixes rather than just the beginning of the string."
 	     ((cycle-sort-function . org-contacts-display-sort-function)
 	      (display-sort-function . org-contacts-display-sort-function))))
 
-(defun org-contacts-complete-group (start end string)
+(defun org-contacts-complete-group (string)
   "Complete text at START from a group.
 
 A group FOO is composed of contacts with the tag FOO."
@@ -520,12 +520,11 @@ A group FOO is composed of contacts with the tag FOO."
 		       (cl-loop for contact in (org-contacts-filter)
 				nconc (org-split-string
 				       (or (cdr (assoc-string "ALLTAGS" (caddr contact))) "") ":")))))))
-	(list start end
+
 	      (if (= (length completion-list) 1)
 		  ;; We've found the correct group, returns the address
 		  (let ((tag (get-text-property 0 'org-contacts-group
 							(car completion-list))))
-		    (lambda (string pred &optional to-ignore)
 		      (mapconcat 'identity
 				 (cl-loop for contact in (org-contacts-filter
 							  nil
@@ -542,12 +541,12 @@ A group FOO is composed of contacts with the tag FOO."
 								  ""))) ""))
 					  ;; If the user has an email address, append USER <EMAIL>.
 					  if email collect (org-contacts-format-email contact-name email))
-				 ", ")))
+				 ", "))
 		;; We haven't found the correct group
 		(completion-table-case-fold completion-list
-					    (not org-contacts-completion-ignore-case))))))))
+					    (not org-contacts-completion-ignore-case)))))))
 
-(defun org-contacts-complete-tags-props (start end string)
+(defun org-contacts-complete-tags-props (string)
   "Insert emails that match the tags expression.
 
 For example: FOO-BAR will match entries tagged with FOO but not
@@ -581,11 +580,8 @@ description."
 				(eval (cdr (org-make-tags-matcher (cl-subseq string 1)))))))
 		       collect (org-contacts-format-email contact-name email))
 	      ",")))
-	(when (not (string= "" result))
-	  ;; return (start end function)
-	  (let* ((to-return result))
-	    (list start end
-		  (lambda (string pred &optional to-ignore) to-return))))))))
+	    (when (not (string= "" result))
+          result)))))
 
 (defun org-contacts-remove-ignored-property-values (ignore-list list)
   "Remove all ignore-list's elements from list and you can use
@@ -596,7 +592,7 @@ description."
 			       ignore-list))
 		list))
 
-(defun org-contacts-complete-name (start end string)
+(defun org-contacts-complete-name (string)
   "Complete text at START with a user name and email."
   (let* ((completion-ignore-case org-contacts-completion-ignore-case)
          (completion-list
@@ -625,27 +621,26 @@ description."
 			   string
 			   (org-uniquify completion-list))))
     (when completion-list
-      (list start end
-	    (org-contacts-make-collection-prefix completion-list)))))
+	  (org-contacts-make-collection-prefix completion-list))))
 
-(defun org-contacts-message-complete-function (&optional start)
+(defun org-contacts-message-complete-function ()
   "Function used in `completion-at-point-functions' in `message-mode'."
-  ;; Avoid to complete in `post-command-hook'.
-  (when completion-in-region-mode
-    (remove-hook 'post-command-hook #'completion-in-region--postch))
   (let ((mail-abbrev-mode-regexp
          "^\\(Resent-To\\|To\\|B?Cc\\|Reply-To\\|From\\|Mail-Followup-To\\|Mail-Copies-To\\|Disposition-Notification-To\\|Return-Receipt-To\\):"))
     (when (mail-abbrev-in-expansion-header-p)
-      (let*
-	  ((end (point))
-	   (start (or start
-		      (save-excursion
-			(re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
-			(goto-char (match-end 0))
-			(point))))
-	   (string (buffer-substring start end)))
-	(run-hook-with-args-until-success
-	 'org-contacts-complete-functions start end string)))))
+      (let
+          ((beg
+            (save-excursion
+              (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
+              (goto-char (match-end 0))
+              (point)))
+           (end (point)))
+        (list beg
+              end
+              (completion-table-dynamic
+               (lambda (string)
+                 (run-hook-with-args-until-success
+                  'org-contacts-complete-functions string))))))))
 
 (defun org-contacts-gnus-get-name-email ()
   "Get name and email address from Gnus message."
