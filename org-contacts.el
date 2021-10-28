@@ -340,13 +340,6 @@ cell corresponding to the contact properties.
 				    (or (cdr (assoc-string "ALLTAGS" (caddr contact))) "") ":"))))
 	     collect contact)))
 
-(when (not (fboundp 'completion-table-case-fold))
-  ;; That function is new in Emacs 24...
-  (defun completion-table-case-fold (table &optional dont-fold)
-    (lambda (string pred action)
-      (let ((completion-ignore-case (not dont-fold)))
-	(complete-with-action action table string pred)))))
-
 (defun org-contacts-try-completion-prefix (to-match collection &optional predicate)
   "Custom implementation of `try-completion'.
 This version works only with list and alist and it looks at all
