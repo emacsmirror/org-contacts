@@ -911,11 +911,9 @@ address."
                          (t (expand-file-name avatar (file-name-directory (first org-contacts-files))))))))
       (when image-path
         (throw 'icon
-               (if (fboundp 'gnus-rescale-image)
-                   ;; FIXME `gnus-rescale-image' does not support rescale `create-image' spec.
-                   (gnus-rescale-image (create-image image-path)
-                                       (cons org-contacts-icon-size org-contacts-icon-size))
-                 (create-image image-path)))))
+               (if (featurep 'imagemagick)
+                   (create-image image-path 'imagemagick nil :height org-contacts-icon-size)
+                 (create-image image-path nil nil :height org-contacts-icon-size)))))
     ;; Next, try Gravatar
     (when org-contacts-icon-use-gravatar
       (let* ((gravatar-size org-contacts-icon-size)
