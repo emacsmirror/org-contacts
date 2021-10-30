@@ -1,0 +1,27 @@
+* Intro
+
+The public repo of original org-mode/contrib/lisp/org-contacts.el
+
+* Screenshots
+
+* Installation
+
+Package will be submitted to NonGNU or MELPA. Wait me have time to do this work.
+
+* Usage
+
+** Find contact in org-contacts databse
+
+Use command =[M-x org-contacts]= to search.
+
+** Complete contact property with some functions support
+
+*** NAME
+
+*** NICK
+
+*** EMAIL
+
+*** BIRTHDAY
+
+
