@@ -898,13 +898,24 @@ address."
   (setq pom (or pom (point)))
   (catch 'icon
     ;; Use `org-contacts-icon-property'
-    (let ((image-data (org-entry-get pom org-contacts-icon-property)))
-      (when image-data
+    (let ((image-path (let ((avatar (org-entry-get pom org-contacts-icon-property))
+                            (link-matcher-regexp "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]"))
+                        (cond
+                         ;; [[file:dir/filename.png]]
+                         ((string-match-p "\\[\\[.*\\]\\]" avatar)
+                          (when (string-match link-matcher-regexp avatar)
+                            (expand-file-name (substring (match-string-no-properties 1 avatar) 5 nil)
+                                              (file-name-directory (first org-contacts-files)))))
+                         ;; "" (empty string)
+                         ((string-empty-p avatar) nil)
+                         (t (expand-file-name avatar (file-name-directory (first org-contacts-files))))))))
+      (when image-path
         (throw 'icon
                (if (fboundp 'gnus-rescale-image)
-                   (gnus-rescale-image (create-image image-data)
+                   ;; FIXME `gnus-rescale-image' does not support rescale `create-image' spec.
+                   (gnus-rescale-image (create-image image-path)
                                        (cons org-contacts-icon-size org-contacts-icon-size))
-                 (create-image image-data)))))
+                 (create-image image-path)))))
     ;; Next, try Gravatar
     (when org-contacts-icon-use-gravatar
       (let* ((gravatar-size org-contacts-icon-size)
