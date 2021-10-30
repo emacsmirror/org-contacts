@@ -898,17 +898,17 @@ address."
   (setq pom (or pom (point)))
   (catch 'icon
     ;; Use `org-contacts-icon-property'
-    (let ((image-path (let ((avatar (org-entry-get pom org-contacts-icon-property))
-                            (link-matcher-regexp "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]"))
-                        (cond
-                         ;; [[file:dir/filename.png]]
-                         ((string-match-p "\\[\\[.*\\]\\]" avatar)
-                          (when (string-match link-matcher-regexp avatar)
-                            (expand-file-name (substring (match-string-no-properties 1 avatar) 5 nil)
-                                              (file-name-directory (first org-contacts-files)))))
-                         ;; "" (empty string)
-                         ((string-empty-p avatar) nil)
-                         (t (expand-file-name avatar (file-name-directory (first org-contacts-files))))))))
+    (let ((image-path (if-let ((avatar (org-entry-get pom org-contacts-icon-property))
+                               (link-matcher-regexp "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]"))
+                          (cond
+                           ;; [[file:dir/filename.png]]
+                           ((string-match-p "\\[\\[.*\\]\\]" avatar)
+                            (when (string-match link-matcher-regexp avatar)
+                              (expand-file-name (substring (match-string-no-properties 1 avatar) 5 nil)
+                                                (file-name-directory (first org-contacts-files)))))
+                           ;; "" (empty string)
+                           ((string-empty-p avatar) nil)
+                           (t (expand-file-name avatar (file-name-directory (first org-contacts-files))))))))
       (when image-path
         (throw 'icon
                (if (featurep 'imagemagick)
