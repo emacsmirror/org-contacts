@@ -1,6 +1,11 @@
 * Intro
 
-The public repo of original org-mode/contrib/lisp/org-contacts.el
+Contacts management system for Org mode
+
+(The public repo of original =org-mode/contrib/lisp/org-contacts.el=.)
+
+Manage your contacts from Org mode and in Org mode convenient way. You can auto complete email
+addresses, export contacts to a vCard file, put birthdays in your Org Agenda, and more.
 
 * Screenshots
 
