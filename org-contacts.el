@@ -4,7 +4,7 @@
 
 ;; Author: Julien Danjou <julien@danjou.info>
 ;; Maintainer: stardiviner <numbchild@gmail.com>
-;; Keywords: outlines, hypermedia, calendar
+;; Keywords: contacts, org-mode, outlines, hypermedia, calendar
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -54,9 +54,10 @@
 ;;;; Usage:
 
 ;;; How to search?
+;;; - You can use [M-x org-contacts] command to search.
 ;;;
-;;; You can use `org-sparse-tree' [C-c / p] to filter based on a
-;;; specific property. Or other matcher on `org-sparse-tree'.
+;;; - You can use `org-sparse-tree' [C-c / p] to filter based on a
+;;;   specific property. Or other matcher on `org-sparse-tree'.
 
 ;;; Code:
 
