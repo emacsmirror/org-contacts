@@ -1,10 +1,11 @@
-;;; org-contacts.el --- Contacts management
+;;; org-contacts.el --- Contacts management  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2010-2014, 2021 Julien Danjou <julien@danjou.info>
 
 ;; Author: Julien Danjou <julien@danjou.info>
 ;; Maintainer: stardiviner <numbchild@gmail.com>
 ;; Keywords: contacts, org-mode, outlines, hypermedia, calendar
+;; Version: 0
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -77,44 +78,36 @@
 (defcustom org-contacts-files nil
   "List of Org files to use as contacts source.
 When set to nil, all your Org files will be used."
-  :type '(repeat file)
-  :group 'org-contacts)
+  :type '(repeat file))
 
 (defcustom org-contacts-email-property "EMAIL"
   "Name of the property for contact email address."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-tel-property "PHONE"
   "Name of the property for contact phone number."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-address-property "ADDRESS"
   "Name of the property for contact address."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-birthday-property "BIRTHDAY"
   "Name of the property for contact birthday date."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-note-property "NOTE"
   "Name of the property for contact note."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-alias-property "ALIAS"
   "Name of the property for contact name alias."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-ignore-property "IGNORE"
   "Name of the property, which values will be ignored when
 completing or exporting to vcard."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 
 (defcustom org-contacts-birthday-format "Birthday: %l (%Y)"
@@ -125,48 +118,39 @@ The following replacements are available:
   %l - Link to the heading
   %y - Number of year
   %Y - Number of year (ordinal)"
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-last-read-mail-property "LAST_READ_MAIL"
   "Name of the property for contact last read email link storage."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-icon-property "ICON"
   "Name of the property for contact icon."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-nickname-property "NICKNAME"
   "Name of the property for IRC nickname match."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-icon-size 32
   "Size of the contacts icons."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-icon-use-gravatar (fboundp 'gravatar-retrieve)
   "Whether use Gravatar to fetch contact icons."
-  :type 'boolean
-  :group 'org-contacts)
+  :type 'boolean)
 
 (defcustom org-contacts-completion-ignore-case t
   "Ignore case when completing contacts."
-  :type 'boolean
-  :group 'org-contacts)
+  :type 'boolean)
 
 (defcustom org-contacts-group-prefix "+"
   "Group prefix."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-tags-props-prefix "#"
   "Tags and properties prefix."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-matcher
   (mapconcat #'identity
@@ -179,29 +163,24 @@ The following replacements are available:
              "|")
   "Matching rule for finding heading that are contacts.
 This can be a tag name, or a property check."
-  :type 'string
-  :group 'org-contacts)
+  :type 'string)
 
 (defcustom org-contacts-email-link-description-format "%s (%d)"
   "Format used to store links to email.
 This overrides `org-email-link-description-format' if set."
-  :group 'org-contacts
   :type 'string)
 
 (defcustom org-contacts-vcard-file "contacts.vcf"
   "Default file for vcard export."
-  :group 'org-contacts
   :type 'file)
 
 (defcustom org-contacts-enable-completion t
   "Enable or not the completion in `message-mode' with `org-contacts'."
-  :group 'org-contacts
   :type 'boolean)
 
 (defcustom org-contacts-complete-functions
   '(org-contacts-complete-group org-contacts-complete-tags-props org-contacts-complete-name)
   "List of functions used to complete contacts in `message-mode'."
-  :group 'org-contacts
   :type 'hook)
 
 ;; Decalre external functions and variables
@@ -224,8 +203,8 @@ A regexp matching strings of whitespace, `,' and `;'.")
 
 (defvar org-contacts-keymap
   (let ((map (make-sparse-keymap)))
-    (define-key map "M" 'org-contacts-view-send-email)
-    (define-key map "i" 'org-contacts-view-switch-to-irc-buffer)
+    (define-key map "M" #'org-contacts-view-send-email)
+    (define-key map "i" #'org-contacts-view-switch-to-irc-buffer)
     map)
   "The keymap used in `org-contacts' result list.")
 
@@ -463,7 +442,7 @@ prefixes rather than just the beginning of the string."
             ((and (listp flag) (eq (car flag) 'boundaries))
              (org-contacts-boundaries-prefix string collection predicate (cdr flag)))
             ((eq flag 'metadata)
-             (org-contacts-metadata-prefix string collection predicate))
+             (org-contacts-metadata-prefix))
             (t nil          ; operation unsupported
                )))))
 
@@ -496,7 +475,7 @@ prefixes rather than just the beginning of the string."
 (defun org-contacts-boundaries-prefix (string collection predicate suffix)
   (cl-list* 'boundaries (completion-boundaries string collection predicate suffix)))
 
-(defun org-contacts-metadata-prefix (string collection predicate)
+(defun org-contacts-metadata-prefix (&rest _)
   '(metadata .
              ((cycle-sort-function . org-contacts-display-sort-function)
               (display-sort-function . org-contacts-display-sort-function))))
@@ -524,7 +503,7 @@ A group FOO is composed of contacts with the tag FOO."
             ;; We've found the correct group, returns the address
             (let ((tag (get-text-property 0 'org-contacts-group
                                           (car completion-list))))
-              (mapconcat 'identity
+              (mapconcat #'identity
                          (cl-loop for contact in (org-contacts-filter
                                                   nil
                                                   tag)
@@ -559,7 +538,7 @@ description."
     (when completion-p
       (let ((result
              (mapconcat
-              'identity
+              #'identity
               (cl-loop for contact in (org-contacts-db)
                        for contact-name = (car contact)
                        for email = (org-contacts-strip-link
@@ -567,7 +546,8 @@ description."
                                               (or
                                                (cdr (assoc-string org-contacts-email-property
                                                                   (cl-caddr contact)))
-                                               ""))) ""))
+                                               "")))
+                                        ""))
                        ;; for tags = (cdr (assoc "TAGS" (nth 2 contact)))
                        ;; for tags-list = (if tags
                        ;;      (split-string (substring (cdr (assoc "TAGS" (nth 2 contact))) 1 -1) ":")
@@ -576,6 +556,10 @@ description."
                        if (with-current-buffer (marker-buffer marker)
                             (save-excursion
                               (goto-char marker)
+                              ;; FIXME: AFAIK, `org-make-tags-matcher' returns
+                              ;; a cons whose cdr is a function, so why do we
+                              ;; pass it to `eval' rather than to (say)
+                              ;; `funcall'?
                               (eval (cdr (org-make-tags-matcher (cl-subseq string 1))))))
                        collect (org-contacts-format-email contact-name email))
               ",")))
@@ -683,7 +667,7 @@ Format is a string matching the following format specification:
   %y - Number of year
   %Y - Number of year (ordinal)"
   (let ((calendar-date-style 'american)
-        (entry ""))
+        ) ;; (entry "")
     (unless format (setq format org-contacts-birthday-format))
     (cl-loop for contact in (org-contacts-filter)
              for anniv = (let ((anniv (cdr (assoc-string
@@ -693,7 +677,9 @@ Format is a string matching the following format specification:
                              (calendar-gregorian-from-absolute
                               (org-time-string-to-absolute anniv))))
              ;; Use `diary-anniversary' to compute anniversary.
-             if (and anniv (apply 'diary-anniversary anniv))
+             ;; FIXME: should we require `diary-lib' somewhere to be sure
+             ;; `diary-anniversary' is defined when we get here?
+             if (and anniv (apply #'diary-anniversary anniv))
              collect (format-spec format
                                   `((?l . ,(org-with-point-at (cadr contact) (org-store-link nil)))
                                     (?h . ,(car contact))
@@ -703,9 +689,9 @@ Format is a string matching the following format specification:
                                                            (calendar-extract-year anniv))))
                                              (format "%d%s" years (diary-ordinal-suffix years)))))))))
 
-(defun org-completing-read-date (prompt collection
-                                        &optional predicate require-match initial-input
-                                        hist def inherit-input-method)
+(defun org-completing-read-date ( prompt _collection
+                                  &optional _predicate _require-match _initial-input
+                                  _hist def _inherit-input-method)
   "Like `completing-read' but reads a date.
 Only PROMPT and DEF are really used."
   (org-read-date nil nil nil prompt nil def))
@@ -817,9 +803,9 @@ This adds `org-contacts-gnus-check-mail-address' and
 `gnus-summary-mode-map' to `org-contacts-gnus-article-from-goto'"
   (require 'gnus)
   (require 'gnus-art)
-  (define-key gnus-summary-mode-map ";" 'org-contacts-gnus-article-from-goto)
-  (add-hook 'gnus-article-prepare-hook 'org-contacts-gnus-check-mail-address)
-  (add-hook 'gnus-article-prepare-hook 'org-contacts-gnus-store-last-mail))
+  (define-key gnus-summary-mode-map ";" #'org-contacts-gnus-article-from-goto)
+  (add-hook 'gnus-article-prepare-hook #'org-contacts-gnus-check-mail-address)
+  (add-hook 'gnus-article-prepare-hook #'org-contacts-gnus-store-last-mail))
 
 (defun org-contacts-setup-completion-at-point ()
   "Add `org-contacts-message-complete-function' as a new function
@@ -828,11 +814,11 @@ to complete the thing at point."
                'org-contacts-message-complete-function))
 
 (defun org-contacts-unload-hook ()
-  (remove-hook 'message-mode-hook 'org-contacts-setup-completion-at-point))
+  (remove-hook 'message-mode-hook #'org-contacts-setup-completion-at-point))
 
 (when (and org-contacts-enable-completion
            (boundp 'completion-at-point-functions))
-  (add-hook 'message-mode-hook 'org-contacts-setup-completion-at-point))
+  (add-hook 'message-mode-hook #'org-contacts-setup-completion-at-point))
 
 (defun org-contacts-wl-get-from-header-content ()
   "Retrieve the content of the `From' header of an email.
@@ -899,24 +885,35 @@ address."
   (setq pom (or pom (point)))
   (catch 'icon
     ;; Use `org-contacts-icon-property'
-    (let ((image-path (if-let ((avatar (org-entry-get pom org-contacts-icon-property))
-                               (link-matcher-regexp "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]"))
-                          (cond
-                           ;; [[file:dir/filename.png]]
-                           ((string-match-p "\\[\\[.*\\]\\]" avatar)
-                            (when (string-match link-matcher-regexp avatar)
-                              (expand-file-name (substring (match-string-no-properties 1 avatar) 5 nil)
-                                                (file-name-directory (first org-contacts-files)))))
-                           ;; "" (empty string)
-                           ((string-empty-p avatar) nil)
-                           (t (expand-file-name avatar (file-name-directory (first org-contacts-files))))))))
+    (let* ((link-matcher-regexp
+            "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]")
+           (contacts-dir (file-name-directory (car org-contacts-files)))
+           (image-path
+            (if-let ((avatar (org-entry-get pom org-contacts-icon-property)))
+                (cond
+                 ;; [[file:dir/filename.png]]
+                 ((string-match-p "\\[\\[.*\\]\\]" avatar)
+                  ;; FIXME: What if avatar matches the above regexp but the
+                  ;; one below?
+                  (when (string-match link-matcher-regexp avatar)
+                    ;; FIXME: 5 seems to be the length of `file:' but I can't
+                    ;; see anything that guarantees that the submatch 1 starts
+                    ;; with `file:'.
+                    (expand-file-name (substring (match-string-no-properties 1 avatar) 5 nil)
+                                      contacts-dir)))
+                 ;; "" (empty string)
+                 ((string-empty-p avatar) nil)
+                 (t (expand-file-name avatar contacts-dir))))))
       (when image-path
         (throw 'icon
                (if (featurep 'imagemagick)
-                   (create-image image-path 'imagemagick nil :height org-contacts-icon-size)
-                 (create-image image-path nil nil :height org-contacts-icon-size)))))
+                   (create-image image-path 'imagemagick nil
+                                 :height org-contacts-icon-size)
+                 (create-image image-path nil nil
+                               :height org-contacts-icon-size)))))
     ;; Next, try Gravatar
     (when org-contacts-icon-use-gravatar
+      (defvar gravatar-size)
       (let* ((gravatar-size org-contacts-icon-size)
              (email-list (org-entry-get pom org-contacts-email-property))
              (gravatar
@@ -965,7 +962,8 @@ address."
   "Return all nicknames of all ERC buffers."
   (cl-loop for buffer in (erc-buffer-list)
            nconc (with-current-buffer buffer
-                   (cl-loop for user-entry in (mapcar 'car (erc-get-channel-user-list))
+                   (cl-loop for user-entry
+                            in (mapcar #'car (erc-get-channel-user-list))
                             collect (elt user-entry 1)))))
 
 (add-to-list 'org-property-set-functions-alist
@@ -1161,15 +1159,16 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
 ;;; Add an Org link type `org-contact:' for easy jump to or searching org-contacts headline.
 ;;; link spec: [[org-contact:query][desc]]
 (org-link-set-parameters "org-contact"
-                         :follow 'org-contacts-link-open
-                         :complete 'org-contacts-link-complete
-                         :store 'org-contacts-link-store
+                         :follow #'org-contacts-link-open
+                         :complete #'org-contacts-link-complete
+                         :store #'org-contacts-link-store
                          :face 'org-contacts-link-face)
 
 (defun org-contacts-link-store ()
   "Store the contact in `org-contacts-files' with a link."
   (when (and (eq major-mode 'org-mode)
-             (member (buffer-file-name) (mapcar 'expand-file-name org-contacts-files)))
+             (member (buffer-file-name)
+                     (mapcar #'expand-file-name org-contacts-files)))
     (if (bound-and-true-p org-id-link-to-org-use-id)
         (org-id-store-link)
       (let ((headline-str (substring-no-properties (org-get-heading t t t t))))
@@ -1182,7 +1181,8 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
           link)))))
 
 (defun org-contacts--all-contacts ()
-  "Return an alist (name . (file . position)) of all contacts in `org-contacts-files'."
+  "Return a list of all contacts in `org-contacts-files'.
+Each element has the form (NAME . (FILE . POSITION))."
   (car (mapcar
         (lambda (file)
           (unless (buffer-live-p (get-buffer (file-name-nondirectory file)))
@@ -1226,7 +1226,7 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
       ;;    (with-current-buffer buf (goto-char position)))
       ))))
 
-(defun org-contacts-link-complete (&optional arg)
+(defun org-contacts-link-complete (&optional _arg)
   "Create a org-contacts link using completion."
   (let ((name (completing-read "org-contact Name: "
                                (mapcar
