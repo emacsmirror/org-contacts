@@ -656,9 +656,13 @@ description."
 
 (defun org-contacts-org-complete--location-function (candidate)
   "Return org-contacts location of contact candidate."
-  (let ((name (plist-get candidate :name))
-        (file (plist-get candidate :file))
-        (position (plist-get candidate :position)))
+  (let* ((candidate (substring-no-properties candidate 1 nil))
+         (contact (seq-find
+                   (lambda (contact) (string-equal (plist-get contact :name) candidate))
+                   (org-contacts--all-contacts)))
+         (name (plist-get contact :name))
+         (file (plist-get contact :file))
+         (position (plist-get contact :position)))
     (with-current-buffer (find-file-noselect file)
       (goto-char position)
       (cons (current-buffer) position))))
