@@ -698,7 +698,7 @@ description."
             (completion-table-dynamic
              (lambda (_)
                (mapcar
-                (lambda (contact) (plist-get contact :name))
+                (lambda (contact) (concat "@" (plist-get contact :name)))
                 (org-contacts--all-contacts))))
 
             ;; :predicate 'stringp
