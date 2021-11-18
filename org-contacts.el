@@ -676,7 +676,8 @@ description."
       (cons (current-buffer) position))))
 
 (defun org-contacts-org-complete-function ()
-  "Function used in `completion-at-point-functions' in `org-mode' to complete @name."
+  "Function used in `completion-at-point-functions' in `org-mode' to complete @name.
+Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)"
   (when-let* ((end (point))
               (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
               (symbol (buffer-substring-no-properties begin end))
@@ -710,32 +711,6 @@ description."
             ;; :company-doc-buffer #'org-contacts-org-complete--doc-function ; doc popup
             ;; :company-location #'org-contacts-org-complete--location-function
             ))))
-
-(add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)
-
-(try-completion
- "tri"
- (mapcar
-  (lambda (contact) (plist-get contact :name))
-  (org-contacts--all-contacts)))
-
-(all-completions "Chr" (nth 2 (org-contacts-org-complete-function)))
-
-;; @Chris
-
-;; (type-of
-;;  (all-completions
-;;   "tri"
-;;   (mapcar
-;;    (lambda (contact) (plist-get contact :name))
-;;    (org-contacts--all-contacts))
-;;   'stringp))
-
-;;; TEST
-;;; @chris
-;; (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)
-;; (remove-hook 'completion-at-point-functions 'org-contacts-completion-at-point 'local)
-;; (add-to-list 'completion-at-point-functions 'org-contacts-org-complete-function)
 
 (defun org-contacts-gnus-get-name-email ()
   "Get name and email address from Gnus message."
