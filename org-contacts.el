@@ -626,11 +626,13 @@ description."
                  (run-hook-with-args-until-success
                   'org-contacts-complete-functions string))))))))
 
+;;;###autoload
 (defun org-contacts-org-complete--annotation-function (candidate)
   "Return org-contacts tags of contact candidate."
   ;; TODO
   "Tags: ")
 
+;;;###autoload
 (defun org-contacts-org-complete--doc-function (candidate)
   "Return org-contacts content of contact candidate."
   (let* ((candidate (substring-no-properties candidate 1 nil))
@@ -663,6 +665,7 @@ description."
         (org-show-all)))
     doc-buffer))
 
+;;;###autoload
 (defun org-contacts-org-complete--location-function (candidate)
   "Return org-contacts location of contact candidate."
   (let* ((candidate (substring-no-properties candidate 1 nil))
@@ -676,6 +679,7 @@ description."
       (goto-char position)
       (cons (current-buffer) position))))
 
+;;;###autoload
 (defun org-contacts-org-complete-function ()
   "Function used in `completion-at-point-functions' in `org-mode' to complete @name.
 Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)"
