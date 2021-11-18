@@ -677,9 +677,8 @@ description."
 
 (defun org-contacts-org-complete-function ()
   "Function used in `completion-at-point-functions' in `org-mode' to complete @name."
-  (when-let* ((bounds (bounds-of-thing-at-point 'symbol))
-              (begin (1- (car bounds)))
-              (end (cdr bounds))
+  (when-let* ((end (point))
+              (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
               (symbol (buffer-substring-no-properties begin end))
               (org-contacts-prefix-p (string-prefix-p "@" symbol))
               ;; (prefix (substring-no-properties symbol 1 nil))
