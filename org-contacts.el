@@ -681,20 +681,10 @@ Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-funct
   (when-let* ((end (point))
               (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
               (symbol (buffer-substring-no-properties begin end))
-              (org-contacts-prefix-p (string-prefix-p "@" symbol))
-              ;; (prefix (substring-no-properties symbol 1 nil))
-              )
+              (org-contacts-prefix-p (string-prefix-p "@" symbol)))
     (when org-contacts-prefix-p
       (list begin
             end
-            
-            ;; (all-completions
-            ;;  prefix
-            ;;  (mapcar
-            ;;   (lambda (contact) (plist-get contact :name))
-            ;;   (org-contacts--all-contacts))
-            ;;  'stringp)
-
             (completion-table-dynamic
              (lambda (_)
                (mapcar
