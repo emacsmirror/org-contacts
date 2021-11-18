@@ -681,10 +681,9 @@ Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-funct
             :annotation-function #'org-contacts-org-complete--annotation-function
             ;; :exit-function ; TODO change completion candidate inserted contact name into org-contact link??
 
-            ;; :company-docsig #'identity                                    ; metadata
-            ;; :company-doc-buffer #'org-contacts-org-complete--doc-function ; doc popup
-            ;; :company-location #'org-contacts-org-complete--location-function
-            ))))
+            :company-docsig #'identity                                    ; metadata
+            :company-doc-buffer #'org-contacts-org-complete--doc-function ; doc popup
+            :company-location #'org-contacts-org-complete--location-function))))
 
 (defun org-contacts-gnus-get-name-email ()
   "Get name and email address from Gnus message."
