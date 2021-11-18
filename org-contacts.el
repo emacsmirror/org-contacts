@@ -639,20 +639,29 @@ description."
                    (org-contacts--all-contacts)))
          (name (plist-get contact :name))
          (file (plist-get contact :file))
-         (position (plist-get contact :position)))
-    (company-doc-buffer
-     ;; get org-contact headline and property drawer.
-     (with-current-buffer (find-file-noselect file)
-       (goto-char position)
-       (when (derived-mode-p 'org-mode)
-         ;; `org-edit-src-code' is not a real narrowing command.
-         ;; Remove this first conditional if you don't want it.
-         (cond ((ignore-errors (org-edit-src-code))
-                (delete-other-windows))
-               ((org-at-block-p)
-                (org-narrow-to-block))
-               (t (org-narrow-to-subtree)))
-         (buffer-substring (point-min) (point-max)))))))
+         (position (plist-get contact :position))
+         (doc-buffer (get-buffer-create " *org-contact*"))
+         (org-contact-buffer (get-buffer (find-file-noselect file)))
+         ;; get org-contact headline and property drawer.
+         (contents (with-current-buffer org-contact-buffer
+                     (goto-char position)
+                     (when (derived-mode-p 'org-mode)
+                       ;; `org-edit-src-code' is not a real narrowing command.
+                       ;; Remove this first conditional if you don't want it.
+                       (cond ((ignore-errors (org-edit-src-code))
+                              (delete-other-windows))
+                             ((org-at-block-p)
+                              (org-narrow-to-block))
+                             (t (org-narrow-to-subtree)))
+                       (buffer-substring (point-min) (point-max))))))
+    (with-current-buffer doc-buffer
+      (read-only-mode 1)
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (insert contents)
+        (org-mode)
+        (org-show-all)))
+    doc-buffer))
 
 (defun org-contacts-org-complete--location-function (candidate)
   "Return org-contacts location of contact candidate."
