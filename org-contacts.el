@@ -691,10 +691,10 @@ Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-funct
                 (lambda (contact) (concat "@" (plist-get contact :name)))
                 (org-contacts--all-contacts))))
 
-            ;; :predicate 'stringp
-            ;; :exclusive 'no
+            :predicate 'stringp
+            :exclusive 'no
             ;; properties check out `completion-extra-properties'
-            ;; :annotation-function #'org-contacts-org-complete--annotation-function
+            :annotation-function #'org-contacts-org-complete--annotation-function
             ;; :exit-function ; TODO change completion candidate inserted contact name into org-contact link??
 
             ;; :company-docsig #'identity                                    ; metadata
