@@ -633,9 +633,13 @@ description."
 
 (defun org-contacts-org-complete--doc-function (candidate)
   "Return org-contacts content of contact candidate."
-  (let ((name (plist-get candidate :name))
-        (file (plist-get candidate :file))
-        (position (plist-get candidate :position)))
+  (let* ((candidate (substring-no-properties candidate 1 nil))
+         (contact (seq-find
+                   (lambda (contact) (string-equal (plist-get contact :name) candidate))
+                   (org-contacts--all-contacts)))
+         (name (plist-get contact :name))
+         (file (plist-get contact :file))
+         (position (plist-get contact :position)))
     (company-doc-buffer
      ;; get org-contact headline and property drawer.
      (with-current-buffer (find-file-noselect file)
