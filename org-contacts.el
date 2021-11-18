@@ -626,6 +626,66 @@ description."
                  (run-hook-with-args-until-success
                   'org-contacts-complete-functions string))))))))
 
+(defun org-contacts-org-complete--annotation-function (candidate)
+  "Return org-contacts tags of contact candidate."
+  ;; TODO
+  "Tags: ")
+
+(defun org-contacts-org-complete--doc-function (candidate)
+  "Return org-contacts content of contact candidate."
+  (let ((name (plist-get candidate :name))
+        (file (plist-get candidate :file))
+        (position (plist-get candidate :position)))
+    (company-doc-buffer
+     ;; get org-contact headline and property drawer.
+     (with-current-buffer (find-file-noselect file)
+       (goto-char position)
+       (when (derived-mode-p 'org-mode)
+         ;; `org-edit-src-code' is not a real narrowing command.
+         ;; Remove this first conditional if you don't want it.
+         (cond ((ignore-errors (org-edit-src-code))
+                (delete-other-windows))
+               ((org-at-block-p)
+                (org-narrow-to-block))
+               (t (org-narrow-to-subtree)))
+         (buffer-substring (point-min) (point-max)))))))
+
+(defun org-contacts-org-complete--location-function (candidate)
+  "Return org-contacts location of contact candidate."
+  (let ((name (plist-get candidate :name))
+        (file (plist-get candidate :file))
+        (position (plist-get candidate :position)))
+    (with-current-buffer (find-file-noselect file)
+      (goto-char position)
+      (cons (current-buffer) position))))
+
+(defun org-contacts-org-complete-function ()
+  "Function used in `completion-at-point-functions' in `org-mode' to complete @name.
+Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)"
+  (when-let* ((end (point))
+              (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
+              (symbol (buffer-substring-no-properties begin end))
+              (org-contacts-prefix-p (string-prefix-p "@" symbol)))
+    (when org-contacts-prefix-p
+      (list begin
+            end
+            (completion-table-dynamic
+             (lambda (_)
+               (mapcar
+                (lambda (contact) (concat "@" (plist-get contact :name)))
+                (org-contacts--all-contacts))))
+
+            :predicate 'stringp
+            :exclusive 'no
+            ;; properties check out `completion-extra-properties'
+            :annotation-function #'org-contacts-org-complete--annotation-function
+            ;; :exit-function ; TODO change completion candidate inserted contact name into org-contact link??
+
+            ;; :company-docsig #'identity                                    ; metadata
+            ;; :company-doc-buffer #'org-contacts-org-complete--doc-function ; doc popup
+            ;; :company-location #'org-contacts-org-complete--location-function
+            ))))
+
 (defun org-contacts-gnus-get-name-email ()
   "Get name and email address from Gnus message."
   (if (gnus-alive-p)
