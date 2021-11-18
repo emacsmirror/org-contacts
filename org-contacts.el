@@ -1236,6 +1236,7 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
         (setq proplist (cons bufferstring proplist))))
     (cdr (reverse proplist))))
 
+;;;###autoload
 ;;; Add an Org link type `org-contact:' for easy jump to or searching org-contacts headline.
 ;;; link spec: [[org-contact:query][desc]]
 (org-link-set-parameters "org-contact"
@@ -1244,6 +1245,7 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
                          :store #'org-contacts-link-store
                          :face 'org-contacts-link-face)
 
+;;;###autoload
 (defun org-contacts-link-store ()
   "Store the contact in `org-contacts-files' with a link."
   (when (and (eq major-mode 'org-mode)
@@ -1260,6 +1262,7 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
           (org-link-add-props :link link :description headline-str)
           link)))))
 
+;;;###autoload
 (defun org-contacts--all-contacts ()
   "Return a list of all contacts in `org-contacts-files'.
 Each element has the form (NAME . (FILE . POSITION))."
@@ -1276,6 +1279,7 @@ Each element has the form (NAME . (FILE . POSITION))."
                  `(:name ,name :file ,file :position ,position))))))
         org-contacts-files)))
 
+;;;###autoload
 (defun org-contacts-link-open (path)
   "Open contacts: link type with jumping or searching."
   (let ((query path))
@@ -1306,6 +1310,7 @@ Each element has the form (NAME . (FILE . POSITION))."
       ;;    (with-current-buffer buf (goto-char position)))
       ))))
 
+;;;###autoload
 (defun org-contacts-link-complete (&optional _arg)
   "Create a org-contacts link using completion."
   (let ((name (completing-read "org-contact Name: "
