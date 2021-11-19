@@ -646,16 +646,17 @@ description."
          (org-contact-buffer (get-buffer (find-file-noselect file)))
          ;; get org-contact headline and property drawer.
          (contents (with-current-buffer org-contact-buffer
-                     (goto-char position)
                      (when (derived-mode-p 'org-mode)
-                       ;; `org-edit-src-code' is not a real narrowing command.
-                       ;; Remove this first conditional if you don't want it.
-                       (cond ((ignore-errors (org-edit-src-code))
-                              (delete-other-windows))
-                             ((org-at-block-p)
-                              (org-narrow-to-block))
-                             (t (org-narrow-to-subtree)))
-                       (buffer-substring (point-min) (point-max))))))
+                       (save-excursion
+                         (goto-char position)
+                         (cond ((ignore-errors (org-edit-src-code))
+                                (delete-other-windows))
+                               ((org-at-block-p)
+                                (org-narrow-to-block))
+                               (t (org-narrow-to-subtree)))
+                         (let ((content (buffer-substring (point-min) (point-max))))
+                           (when (buffer-narrowed-p) (widen))
+                           content))))))
     (with-current-buffer doc-buffer
       (read-only-mode 1)
       (let ((inhibit-read-only t))
