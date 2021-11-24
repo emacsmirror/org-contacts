@@ -666,6 +666,9 @@ description."
         (org-show-all)))
     doc-buffer))
 
+;;; display company-mode doc buffer bellow current window.
+(add-to-list 'display-buffer-alist '("^ \\*org-contact\\*" . (display-buffer-below-selected)))
+
 ;;;###autoload
 (defun org-contacts-org-complete--location-function (candidate)
   "Return org-contacts location of contact candidate."
