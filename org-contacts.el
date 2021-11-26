@@ -663,7 +663,8 @@ description."
         (erase-buffer)
         (insert contents)
         (org-mode)
-        (org-show-all)))
+        (org-show-all)
+        (font-lock-ensure)))
     doc-buffer))
 
 ;;; display company-mode doc buffer bellow current window.
