@@ -1318,7 +1318,7 @@ Each element has the form (NAME . (FILE . POSITION))."
 ;;;###autoload
 (defun org-contacts-link-complete (&optional _arg)
   "Create a org-contacts link using completion."
-  (let ((name (completing-read "org-contact Name: "
+  (let ((name (completing-read "org-contacts NAME: "
                                (mapcar
                                 (lambda (plist) (plist-get plist :name))
                                 (org-contacts--all-contacts)))))
@@ -1330,6 +1330,32 @@ Each element has the form (NAME . (FILE . POSITION))."
    ((string-match "/.*/" path)
     '(:background "sky blue" :overline t :slant 'italic))
    (t '(:inherit 'org-link))))
+
+
+;;; org-mode link "mailto:" email completion.
+(org-link-set-parameters "mailto" :complete #'org-contacts-mailto-link-completion)
+
+(defun org-contacts-mailto-link--get-all-emails ()
+  "Retrieve all org-contacts EMAIL property values."
+  (mapcar
+   (lambda (contact)
+     (let* ((org-contacts-buffer (find-file-noselect (car org-contacts-files)))
+            (name (plist-get contact :name))
+            (position (plist-get contact :position))
+            (email (save-excursion
+                     (with-current-buffer org-contacts-buffer
+                       (goto-char position)
+                       ;; (symbol-name (org-property-or-variable-value 'EMAIL))
+                       (org-entry-get (point) "EMAIL")))))
+       ;; (cons name email)
+       email))
+   (org-contacts--all-contacts)))
+
+(defun org-contacts-mailto-link-completion (&optional _arg)
+  "Org mode link `mailto:' completion with org-contacts emails."
+  (let ((email (completing-read "org-contacts EMAIL: "
+                                (org-contacts-mailto-link--get-all-emails))))
+    (concat "mailto:" email)))
 
 (provide 'org-contacts)
 
