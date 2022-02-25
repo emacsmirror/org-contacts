@@ -1300,8 +1300,8 @@ Each element has the form (NAME . (FILE . POSITION))."
      ;; jump to contact headline directly
      (t
       (let* ((f (car org-contacts-files))
+             (_ (find-file f))
              (buf (get-buffer (file-name-nondirectory f))))
-        (unless (buffer-live-p buf) (find-file f))
         (with-current-buffer buf
           (goto-char (marker-position (org-find-exact-headline-in-buffer query))))
         (display-buffer buf '(display-buffer-below-selected)))
