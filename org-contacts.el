@@ -1297,7 +1297,7 @@ Each element has the form (NAME . (FILE . POSITION))."
         (with-current-buffer buf
           (string-match "/\\(.*\\)/" query)
           (occur (match-string 1 query)))))
-     ;; jump to contact headline directly
+     ;; jump to exact contact headline directly
      (t
       (let* ((f (car org-contacts-files))
              (_ (find-file f))
@@ -1305,14 +1305,21 @@ Each element has the form (NAME . (FILE . POSITION))."
         (with-current-buffer buf
           (goto-char (marker-position (org-find-exact-headline-in-buffer query))))
         (display-buffer buf '(display-buffer-below-selected)))
-      ;; FIXME
-      ;; (let* ((contact-entry (plist-get (org-contacts--all-contacts) query))
-      ;;         (contact-name (plist-get contact-entry :name))
-      ;;         (file (plist-get contact-entry :file))
-      ;;         (position (plist-get contact-entry :position))
-      ;;         (buf (get-buffer (file-name-nondirectory file))))
-      ;;    (unless (buffer-live-p buf) (find-file file))
-      ;;    (with-current-buffer buf (goto-char position)))
+
+      ;; (let* ((f (car org-contacts-files))
+      ;;        (_ (find-file f))
+      ;;        ;; FIXME:
+      ;;        (contact-entry (map-filter
+      ;;                        (lambda (contact-plist)
+      ;;                          (if (string-equal (plist-get contact-plist :name) query)
+      ;;                              contact-plist))
+      ;;                        (org-contacts--all-contacts)))
+      ;;        (contact-name (plist-get contact-entry :name))
+      ;;        (file (plist-get contact-entry :file))
+      ;;        (position (plist-get contact-entry :position))
+      ;;        (buf (get-buffer (file-name-nondirectory file))))
+      ;;   (with-current-buffer buf (goto-char position))
+      ;;   (display-buffer buf '(display-buffer-below-selected)))
       ))))
 
 ;;;###autoload
