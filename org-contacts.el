@@ -1040,8 +1040,11 @@ address."
                                                      &optional predicate require-match initial-input
                                                      hist def inherit-input-method)
   "Like `completing-read' but reads a nickname."
-  (org-completing-read prompt (append collection (erc-nicknames-list)) predicate require-match
-                       initial-input hist def inherit-input-method))
+  (if (featurep 'erc)
+      (org-completing-read prompt (append collection (erc-nicknames-list)) predicate require-match
+                           initial-input hist def inherit-input-method)
+    (org-completing-read prompt collection predicate require-match
+                         initial-input hist def inherit-input-method)))
 
 (defun erc-nicknames-list ()
   "Return all nicknames of all ERC buffers."
