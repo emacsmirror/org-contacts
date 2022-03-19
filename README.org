@@ -1,6 +1,6 @@
 * Intro
 
-Contacts management system for Org mode
+Contacts management system for Org Mode.
 
 (The public repo of original =org-mode/contrib/lisp/org-contacts.el=.)
 

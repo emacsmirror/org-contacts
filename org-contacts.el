@@ -1,4 +1,4 @@
-;;; org-contacts.el --- Contacts management  -*- lexical-binding: t; -*-
+;;; org-contacts.el --- Contacts management system for Org Mode. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2010-2014, 2021 Julien Danjou <julien@danjou.info>
 
