@@ -1339,7 +1339,7 @@ Each element has the form (NAME . (FILE . POSITION))."
   (cond
    ((string-match "/.*/" path)
     '(:background "sky blue" :overline t :slant 'italic))
-   (t '(:inherit 'org-link))))
+   (t '(:inherit org-link))))
 
 
 ;;; org-mode link "mailto:" email completion.
