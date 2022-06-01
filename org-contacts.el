@@ -1206,7 +1206,9 @@ link string and return the pure link target."
 
 ;; Add the link type supported by org-contacts-strip-link
 ;; so everything is in order for its use in Org files
-(org-link-set-parameters "tel")
+(if (fboundp 'org-link-set-parameters)
+    (org-link-set-parameters "tel")
+  (org-add-link-type "tel"))
 
 (defun org-contacts-split-property (string &optional separators omit-nulls)
   "Custom version of `split-string'.
@@ -1247,11 +1249,13 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
 ;;;###autoload
 ;;; Add an Org link type `org-contact:' for easy jump to or searching org-contacts headline.
 ;;; link spec: [[org-contact:query][desc]]
-(org-link-set-parameters "org-contact"
-                         :follow #'org-contacts-link-open
-                         :complete #'org-contacts-link-complete
-                         :store #'org-contacts-link-store
-                         :face 'org-contacts-link-face)
+(if (fboundp 'org-link-set-parameters)
+    (org-link-set-parameters "org-contact"
+                             :follow #'org-contacts-link-open
+                             :complete #'org-contacts-link-complete
+                             :store #'org-contacts-link-store
+                             :face 'org-contacts-link-face)
+  (org-add-link-type "org-contact" 'org-contacts-link-open))
 
 ;;;###autoload
 (defun org-contacts-link-store ()
@@ -1343,7 +1347,9 @@ Each element has the form (NAME . (FILE . POSITION))."
 
 
 ;;; org-mode link "mailto:" email completion.
-(org-link-set-parameters "mailto" :complete #'org-contacts-mailto-link-completion)
+(if (fboundp 'org-link-set-parameters)
+    (org-link-set-parameters "mailto" :complete #'org-contacts-mailto-link-completion)
+  (org-add-link-type "mailto"))
 
 (defun org-contacts-mailto-link--get-all-emails ()
   "Retrieve all org-contacts EMAIL property values."
