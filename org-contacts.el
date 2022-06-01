@@ -217,7 +217,10 @@ A regexp matching strings of whitespace, `,' and `;'.")
 
 (defun org-contacts-files ()
   "Return list of Org files to use for contact management."
-  (or org-contacts-files (org-agenda-files t 'ifmode)))
+  (if org-contacts-files
+      org-contacts-files
+    (message "[ERROR] Your custom variable `org-contacts-files' is nil. Revert to `org-agenda-files' now.")
+    (org-agenda-files t 'ifmode)))
 
 (defun org-contacts-db-need-update-p ()
   "Determine whether `org-contacts-db' needs to be refreshed."
@@ -247,7 +250,7 @@ buffer."
          result)
     (when (org-contacts-db-need-update-p)
       (let ((progress-reporter
-             (make-progress-reporter "Updating Org Contacts Database..." 0 (length org-contacts-files)))
+             (make-progress-reporter "Updating Org Contacts Database..." 0 (length (org-contacts-files))))
             (i 0))
         (dolist (file (org-contacts-files))
           (if (catch 'nextfile
@@ -973,7 +976,7 @@ address."
     ;; Use `org-contacts-icon-property'
     (let* ((link-matcher-regexp
             "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]")
-           (contacts-dir (file-name-directory (car org-contacts-files)))
+           (contacts-dir (file-name-directory (car (org-contacts-files))))
            (image-path
             (if-let ((avatar (org-entry-get pom org-contacts-icon-property)))
                 (cond
@@ -1263,7 +1266,7 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
   "Store the contact in `org-contacts-files' with a link."
   (when (and (eq major-mode 'org-mode)
              (member (buffer-file-name)
-                     (mapcar #'expand-file-name org-contacts-files)))
+                     (mapcar #'expand-file-name (org-contacts-files))))
     (if (bound-and-true-p org-id-link-to-org-use-id)
         (org-id-store-link)
       (let ((headline-str (substring-no-properties (org-get-heading t t t t))))
@@ -1290,7 +1293,7 @@ Each element has the form (NAME . (FILE . POSITION))."
                      (file (buffer-file-name))
                      (position (point)))
                  `(:name ,name :file ,file :position ,position))))))
-        org-contacts-files)))
+        (org-contacts-files))))
 
 ;;;###autoload
 (defun org-contacts-link-open (path)
@@ -1299,7 +1302,7 @@ Each element has the form (NAME . (FILE . POSITION))."
     (cond
      ;; /query/ format searching
      ((string-match "/.*/" query)
-      (let* ((f (car org-contacts-files))
+      (let* ((f (car (org-contacts-files)))
              (buf (get-buffer (file-name-nondirectory f))))
         (unless (buffer-live-p buf) (find-file f))
         (with-current-buffer buf
@@ -1307,14 +1310,14 @@ Each element has the form (NAME . (FILE . POSITION))."
           (occur (match-string 1 query)))))
      ;; jump to exact contact headline directly
      (t
-      (let* ((f (car org-contacts-files))
+      (let* ((f (car (org-contacts-files)))
              (_ (find-file f))
              (buf (get-buffer (file-name-nondirectory f))))
         (with-current-buffer buf
           (goto-char (marker-position (org-find-exact-headline-in-buffer query))))
         (display-buffer buf '(display-buffer-below-selected)))
 
-      ;; (let* ((f (car org-contacts-files))
+      ;; (let* ((f (car (org-contacts-files)))
       ;;        (_ (find-file f))
       ;;        ;; FIXME:
       ;;        (contact-entry (map-filter
@@ -1356,7 +1359,7 @@ Each element has the form (NAME . (FILE . POSITION))."
   "Retrieve all org-contacts EMAIL property values."
   (mapcar
    (lambda (contact)
-     (let* ((org-contacts-buffer (find-file-noselect (car org-contacts-files)))
+     (let* ((org-contacts-buffer (find-file-noselect (car (org-contacts-files))))
             (name (plist-get contact :name))
             (position (plist-get contact :position))
             (email (save-excursion
