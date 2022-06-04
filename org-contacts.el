@@ -742,7 +742,10 @@ Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-funct
     (when marker
       (switch-to-buffer-other-window (marker-buffer marker))
       (goto-char marker)
-      (when (eq major-mode 'org-mode) (org-show-context 'agenda)))))
+      (when (eq major-mode 'org-mode)
+        (if (fboundp 'org-fold-show-context)
+            (org-fold-show-context 'agenda)
+          (org-show-context 'agenda))))))
 
 (with-no-warnings (defvar date)) ;; unprefixed, from calendar.el
 (defun org-contacts-anniversaries (&optional field format)
