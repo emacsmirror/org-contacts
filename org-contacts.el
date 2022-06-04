@@ -634,7 +634,8 @@ description."
 (defun org-contacts-org-complete--annotation-function (candidate)
   "Return org-contacts tags of contact candidate."
   ;; TODO
-  "Tags: ")
+  "Tags: "
+  (ignore candidate))
 
 ;;;###autoload
 (defun org-contacts-org-complete--doc-function (candidate)
@@ -661,6 +662,7 @@ description."
                          (let ((content (buffer-substring (point-min) (point-max))))
                            (when (buffer-narrowed-p) (widen))
                            content))))))
+    (ignore name)
     (with-current-buffer doc-buffer
       (read-only-mode 1)
       (let ((inhibit-read-only t))
@@ -684,6 +686,7 @@ description."
          (name (plist-get contact :name))
          (file (plist-get contact :file))
          (position (plist-get contact :position)))
+    (ignore name)
     (with-current-buffer (find-file-noselect file)
       (goto-char position)
       (cons (current-buffer) position))))
@@ -1373,6 +1376,7 @@ Each element has the form (NAME . (FILE . POSITION))."
                        (goto-char position)
                        ;; (symbol-name (org-property-or-variable-value 'EMAIL))
                        (org-entry-get (point) "EMAIL")))))
+       (ignore name)
        ;; (cons name email)
        email))
    (org-contacts--all-contacts)))
