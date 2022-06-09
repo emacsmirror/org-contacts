@@ -6,7 +6,7 @@
 ;; Maintainer: stardiviner <numbchild@gmail.com>
 ;; Keywords: contacts, org-mode, outlines, hypermedia, calendar
 ;; Version: 1.0
-;; Package-Requires: ((emacs "28.1") (cl-lib "1.0") (org "9.3.4") (gnus "5.13"))
+;; Package-Requires: ((emacs "27.1") (cl-lib "0.7") (org "9.3.4") (gnus "5.13"))
 ;; Homepage: https://repo.or.cz/org-contacts.git
 ;;
 ;; This file is not part of GNU Emacs.
