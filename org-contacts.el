@@ -1,6 +1,6 @@
 ;;; org-contacts.el --- Contacts management system for Org Mode -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2010-2014, 2021 Julien Danjou <julien@danjou.info>
+;; Copyright (C) 2010-2022  Free Software Foundation, Inc.
 
 ;; Author: Julien Danjou <julien@danjou.info>
 ;; Maintainer: stardiviner <numbchild@gmail.com>
@@ -563,9 +563,9 @@ description."
                               (goto-char marker)
                               ;; FIXME: AFAIK, `org-make-tags-matcher' returns
                               ;; a cons whose cdr is a function, so why do we
-                              ;; pass it to `eval' rather than to (say)
-                              ;; `funcall'?
-                              (eval (cdr (org-make-tags-matcher (cl-subseq string 1))))))
+                              ;; pass it to `eval'?
+                              (eval (cdr (org-make-tags-matcher (cl-subseq string 1)))
+                                    t)))
                        collect (org-contacts-format-email contact-name email))
               ",")))
         (when (not (string= "" result))
@@ -634,7 +634,7 @@ description."
 (defun org-contacts-org-complete--annotation-function (candidate)
   "Return org-contacts tags of contact candidate."
   ;; TODO
-  "Tags: "
+  "Tags: " ;; FIXME: Ignored!
   (ignore candidate))
 
 (defun org-contacts-org-complete--doc-function (candidate)
@@ -692,7 +692,7 @@ description."
 ;;;###autoload
 (defun org-contacts-org-complete-function ()
   "Function used in `completion-at-point-functions' in `org-mode' to complete @name.
-Usage: (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)"
+Usage: (add-hook \\='completion-at-point-functions #\\='org-contacts-org-complete-function nil \\='local)"
   (when-let* ((end (point))
               (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
               (symbol (buffer-substring-no-properties begin end))
