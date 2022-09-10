@@ -5,7 +5,7 @@
 ;; Author: Julien Danjou <julien@danjou.info>
 ;; Maintainer: stardiviner <numbchild@gmail.com>
 ;; Keywords: contacts, org-mode, outlines, hypermedia, calendar
-;; Version: 1.0
+;; Version: 1.1
 ;; Package-Requires: ((emacs "27.1") (org "9.3.4"))
 ;; Homepage: https://repo.or.cz/org-contacts.git
 ;;
