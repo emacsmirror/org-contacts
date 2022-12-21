@@ -1318,8 +1318,9 @@ Each element has the form (NAME . (FILE . POSITION))."
      ;; jump to exact contact headline directly
      (t
       (with-current-buffer buf
-        (let ((position (org-find-exact-headline-in-buffer query)))
-          (goto-char (marker-position position))))
+        (if-let ((position (org-find-exact-headline-in-buffer query)))
+            (goto-char (marker-position position))
+          (user-error "[org-contacts] Can't find <%s> in your `org-contacts-files'." query)))
       (display-buffer buf '(display-buffer-below-selected))
 
       ;; FIXME:
