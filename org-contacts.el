@@ -1372,7 +1372,14 @@ Each element has the form (NAME . (FILE . POSITION))."
                      (with-current-buffer org-contacts-buffer
                        (goto-char position)
                        ;; (symbol-name (org-property-or-variable-value 'EMAIL))
-                       (org-entry-get (point) "EMAIL")))))
+                       (when-let ((pvalue (org-entry-get (point) "EMAIL")))
+                         ;; handle `mailto:' link. e.g. "[[mailto:yantar92@posteo.net]]", "[[mailto:yantar92@posteo.net][yantar92@posteo.net]]"
+                         ;; Reference the testing file `test-org-contacts.el'.
+                         (if (string-match
+                              "\\[\\[mailto:\\(.*\\)\\]\\(\\[.*\\]\\)\\]\\(,\\ *\\[\\[mailto:\\(.*\\)\\]\\(\\[.*\\]\\)\\]\\)"
+                              pvalue)
+                             (match-string 1 pvalue)
+                           pvalue))))))
        (ignore name)
        ;; (cons name email)
        email))
