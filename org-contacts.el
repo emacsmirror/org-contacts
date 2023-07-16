@@ -1273,7 +1273,8 @@ are effectively trimmed).  If nil, all zero-length substrings are retained."
   "Store the contact in `org-contacts-files' with a link."
   (when (and (eq major-mode 'org-mode)
              (member (buffer-file-name)
-                     (mapcar #'expand-file-name (org-contacts-files))))
+                     (mapcar #'expand-file-name (org-contacts-files)))
+             (not (org-before-first-heading-p)))
     (if (bound-and-true-p org-id-link-to-org-use-id)
         (org-id-store-link)
       (let ((headline-str (substring-no-properties (org-get-heading t t t t))))
