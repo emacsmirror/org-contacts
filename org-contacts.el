@@ -1,4 +1,4 @@
-;;; org-contacts.el --- Contacts management system for Org Mode -*- lexical-binding: t; -*-
+;;; org-contacts.el --- Contacts management system for Org mode -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2010-2022  Free Software Foundation, Inc.
 
@@ -72,6 +72,7 @@
 (require 'org-agenda)
 (require 'org-capture)
 (require 'ol)
+(autoload 'with-memoization "subr")
 
 (defgroup org-contacts nil
   "Options about contacts management."
