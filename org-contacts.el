@@ -845,11 +845,11 @@ This function should be called from `gnus-article-prepare-hook'."
 ;;====================================== org-contacts searching =====================================
 
 (defcustom org-contacts-identity-properties-list
-  '(org-contacts-email-property
-    org-contacts-alias-property
-    org-contacts-tel-property
-    org-contacts-address-property
-    org-contacts-birthday-property)
+  `(,org-contacts-email-property
+    ,org-contacts-alias-property
+    ,org-contacts-tel-property
+    ,org-contacts-address-property
+    ,org-contacts-birthday-property)
   "Matching rule for finding heading that are contacts.
 This can be property key checking."
   :type 'list
@@ -895,7 +895,7 @@ This can be property key checking."
                                          (wholenump length))
                                length)))
     ;; detect whether headline is an org-contacts entry?
-    (when (seq-intersection (mapcar 'car properties) org-contacts-identity-properties-list)
+    (when (seq-intersection org-contacts-identity-properties-list (mapcar 'car properties))
       (propertize
        (concat
         (if avatar-image-path
