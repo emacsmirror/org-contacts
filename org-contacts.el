@@ -962,7 +962,8 @@ This can be property key checking."
   "Search org-contacts from FILES and jump to contact location."
   (interactive)
   (unless org-contacts--candidates-cache
-    (setq org-contacts--candidates-cache (org-contacts--return-candidates files)))
+    (setq org-contacts--candidates-cache
+          (org-contacts--return-candidates (or files org-contacts-files))))
   (if-let* ((files (or files org-contacts-files))
             ((seq-every-p 'file-exists-p files)))
       (when-let* ((candidates org-contacts--candidates-cache)
