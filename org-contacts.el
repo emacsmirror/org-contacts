@@ -1188,6 +1188,9 @@ address."
     (org-with-point-at marker
       (switch-to-buffer-other-window (org-contacts-irc-buffer)))))
 
+(defvar org-contacts-all-contacts nil
+  "A data store variable of all contacts.")
+
 (defun org-contacts-completing-read-nickname
     (prompt collection
             &optional predicate require-match initial-input
