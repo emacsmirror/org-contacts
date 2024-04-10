@@ -74,6 +74,7 @@
 (require 'ol)
 (autoload 'with-memoization "subr")
 
+(declare-function diary-anniversary "diary-lib" (month day &optional year mark))
 (declare-function erc-server-buffer-live-p "erc" ())
 (declare-function erc-server-process-alive "erc" (&optional buffer))
 (defvar erc-server-processing-p)
