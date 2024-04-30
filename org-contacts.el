@@ -652,7 +652,7 @@ description."
   (let* ((candidate (substring-no-properties candidate 1 nil))
          (contact (seq-find
                    (lambda (contact) (string-equal (plist-get contact :name) candidate))
-                   (org-contacts--all-contacts)))
+                   org-contacts-all-contacts))
          (name (plist-get contact :name))
          (file (plist-get contact :file))
          (position (plist-get contact :position))
@@ -690,7 +690,7 @@ description."
   (let* ((candidate (substring-no-properties candidate 1 nil))
          (contact (seq-find
                    (lambda (contact) (string-equal (plist-get contact :name) candidate))
-                   (org-contacts--all-contacts)))
+                   org-contacts-all-contacts))
          (name (plist-get contact :name))
          (file (plist-get contact :file))
          (position (plist-get contact :position)))
@@ -715,7 +715,7 @@ Usage: (add-hook \\='completion-at-point-functions
              (lambda (_)
                (mapcar
                 (lambda (contact) (concat "@" (plist-get contact :name)))
-                (org-contacts--all-contacts))))
+                org-contacts-all-contacts)))
 
             :predicate 'stringp
             :exclusive 'no
@@ -1190,18 +1190,13 @@ address."
     (org-with-point-at marker
       (switch-to-buffer-other-window (org-contacts-irc-buffer)))))
 
-(defvar org-contacts-all-contacts nil
-  "A data store variable of all contacts.")
-
 (defun org-contacts-completing-read-nickname
     (prompt collection
             &optional predicate require-match initial-input
             hist def inherit-input-method)
   "Like `completing-read' but reads a property \"NICKNAME\" value in PROMPT.
 Return a org-contacts \"NICKNAME\" as property's value after completion."
-  (let* ((org-contacts-all-contacts (with-memoization org-contacts-all-contacts
-                                      (org-contacts--all-contacts)))
-         (org-contacts-candidates-propertized
+  (let* ((org-contacts-candidates-propertized
           (mapcar
            (lambda (plist)
              (let* ((name (plist-get plist :name))
@@ -1466,6 +1461,9 @@ are effectively trimmed.  If nil, all zero-length substrings are retained."
           (org-link-add-props :link link :description headline-str)
           link)))))
 
+(defvar org-contacts-all-contacts nil
+  "A data store variable of all contacts.")
+
 (defun org-contacts--all-contacts ()
   "Return a list of all contacts in `org-contacts-files'.
 Each element has the form (NAME . (FILE . POSITION))."
@@ -1497,6 +1495,10 @@ Each element has the form (NAME . (FILE . POSITION))."
                          :qq property-qq)))))))
         (org-contacts-files))))
 
+(setq org-contacts-all-contacts
+      (with-memoization org-contacts-all-contacts
+        (org-contacts--all-contacts)))
+
 ;;;###autoload
 (defun org-contacts-link-open (query)
   "Open contacts: link type with jumping or searching."
@@ -1523,7 +1525,7 @@ Each element has the form (NAME . (FILE . POSITION))."
       ;;                        (lambda (contact-plist)
       ;;                          (if (string-equal (plist-get contact-plist :name) query)
       ;;                              contact-plist))
-      ;;                        (org-contacts--all-contacts)))
+      ;;                        org-contacts-all-contacts))
       ;;        (contact-name (plist-get contact-entry :name))
       ;;        (file (plist-get contact-entry :file))
       ;;        (position (plist-get contact-entry :position))
@@ -1538,7 +1540,7 @@ Each element has the form (NAME . (FILE . POSITION))."
   (let ((name (completing-read "org-contacts NAME: "
                                (mapcar
                                 (lambda (plist) (plist-get plist :name))
-                                (org-contacts--all-contacts)))))
+                                org-contacts-all-contacts))))
     (concat "org-contact:" name)))
 
 (defun org-contacts-link-face (path)
@@ -1581,7 +1583,7 @@ Each element has the form (NAME . (FILE . POSITION))."
              (ignore name)
              ;; (cons name email)
              email))
-         (org-contacts--all-contacts)))
+         org-contacts-all-contacts))
   ;; clean nil and empty string "" from result.
   (delete ""
           (delete nil org-contacts-emails-list)))
