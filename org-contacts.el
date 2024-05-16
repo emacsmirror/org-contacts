@@ -1435,8 +1435,8 @@ are effectively trimmed.  If nil, all zero-length substrings are retained."
                              :complete #'org-contacts-link-complete
                              :store #'org-contacts-link-store
                              :face 'org-contacts-link-face)
-  (if (fboundp 'org-add-link-type)
-      (org-add-link-type "org-contact" 'org-contacts-link-open)))
+  (when (fboundp 'org-add-link-type)
+    (org-add-link-type "org-contact" 'org-contacts-link-open)))
 
 ;;;###autoload
 (defun org-contacts-link-store ()
@@ -1502,9 +1502,9 @@ Each element has the form (NAME . (FILE . POSITION))."
 ;;;###autoload
 (defun org-contacts-link-open (query)
   "Open contacts: link type with jumping or searching."
-  (let* ((f (car (org-contacts-files)))
-         (fname (file-name-nondirectory f))
-         (buf (if (buffer-live-p (get-buffer fname)) (get-buffer fname) (find-file f))))
+  (let* ((file-path (car (org-contacts-files)))
+         (file-name (file-name-nondirectory file-path))
+         (buf (or (get-buffer file-name) (get-buffer (find-file-noselect file-path)))))
     (cond
      ;; /query/ format searching
      ((string-match "/.*/" query)
