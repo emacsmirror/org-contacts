@@ -954,7 +954,7 @@ This can be property key checking."
          ;; FIXME: `goto-char' not physically move point in buffer.
          ;; (display-buffer buf '(display-buffer-below-selected))
          ;; (goto-char (org-find-exact-headline-in-buffer contact-name nil t))
-         )))
+         (org-fold-show-context))))
    org-contacts-files))
 
 ;;;###autoload
@@ -1516,7 +1516,9 @@ Each element has the form (NAME . (FILE . POSITION))."
      (t
       (with-current-buffer buf
         (if-let ((position (org-find-exact-headline-in-buffer query)))
-            (goto-char (marker-position position))
+            (progn
+              (goto-char (marker-position position))
+              (org-fold-show-context))
           (user-error "[org-contacts] Can't find <%s> in your `org-contacts-files'." query)))
       (display-buffer buf '(display-buffer-below-selected))
 
