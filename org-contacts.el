@@ -227,6 +227,9 @@ A regexp matching strings of whitespace, `,' and `;'.")
 (defvar org-contacts-last-update nil
   "Last time the Org Contacts database has been updated.")
 
+(defvar org-contacts-all-contacts nil
+  "A data store variable of all contacts.")
+
 (defun org-contacts-files ()
   "Return list of Org files to use for contact management."
   (if org-contacts-files
@@ -1460,9 +1463,6 @@ are effectively trimmed.  If nil, all zero-length substrings are retained."
         (let ((link (concat "org-contact:" headline-str)))
           (org-link-add-props :link link :description headline-str)
           link)))))
-
-(defvar org-contacts-all-contacts nil
-  "A data store variable of all contacts.")
 
 (defun org-contacts--all-contacts ()
   "Return a list of all contacts in `org-contacts-files'.
