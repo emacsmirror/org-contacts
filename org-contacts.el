@@ -866,7 +866,7 @@ This can be property key checking."
          (properties (org-entry-properties headline 'standard))
          ;; extra headline properties
          (avatar-image-path
-          (when-let* ((avatar-value (car (org-entry-get-multivalued-property headline "AVATAR")))
+          (when-let* ((avatar-value (org-entry-get headline "AVATAR"))
                       (avatar-link-path (cond
                                          ;; [[file:contact_dir/avatar.png]]
                                          ((string-match org-link-plain-re avatar-value)
@@ -884,10 +884,10 @@ This can be property key checking."
             avatar-absolute-path))
          (info (concat "\n"
                        (concat org-contacts-ahead-space-padding "   ")
-                       (string-join (let ((org-property-separators (list (cons org-contacts-nickname-property "[,\ ]"))))
-                                      (org-entry-get-multivalued-property headline org-contacts-nickname-property)) ", ")
-                       (string-join (let ((org-property-separators (list (cons org-contacts-email-property "[,\ ]"))))
-                                      (org-entry-get-multivalued-property headline org-contacts-email-property)) ", ")
+                       (let ((org-property-separators (list (cons org-contacts-nickname-property "[,\ ]"))))
+                         (org-entry-get headline org-contacts-nickname-property))
+                       (let ((org-property-separators (list (cons org-contacts-email-property "[,\ ]"))))
+                         (org-entry-get headline org-contacts-email-property))
                        "\n"))
          (middle-line-length (when-let* ((length (- (- org-tags-column)
                                                     (length (string-join tags ":"))
