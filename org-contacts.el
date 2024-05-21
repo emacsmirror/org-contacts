@@ -854,9 +854,7 @@ This function should be called from `gnus-article-prepare-hook'."
     ,org-contacts-address-property
     ,org-contacts-birthday-property)
   "Matching rule for finding heading that are contacts.
-This can be property key checking."
-  :type 'list
-  :safe #'listp)
+This can be property key checking.")
 
 (defvar org-contacts-ahead-space-padding (make-string 5 ? )
   "The space padding for align avatar image with contact name and properties.")
