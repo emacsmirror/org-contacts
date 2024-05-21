@@ -889,7 +889,7 @@ This can be property key checking."
                        (let ((org-property-separators (list (cons org-contacts-email-property "[,\ ]"))))
                          (org-entry-get headline org-contacts-email-property))
                        "\n"))
-         (middle-line-length (when-let* ((length (- (- org-tags-column)
+         (middle-line-length (when-let* ((length (- (abs org-tags-column)
                                                     (length (string-join tags ":"))
                                                     (length contact-name)))
                                          (wholenump length))
