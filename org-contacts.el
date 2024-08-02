@@ -6,7 +6,7 @@
 ;; Maintainer: stardiviner <numbchild@gmail.com>
 ;; Keywords: contacts, org-mode, outlines, hypermedia, calendar
 ;; Version: 1.1
-;; Package-Requires: ((emacs "28.1") (org "9.7"))
+;; Package-Requires: ((emacs "29.1") (org "9.7"))
 ;; Homepage: https://repo.or.cz/org-contacts.git
 ;;
 ;; This file is not part of GNU Emacs.
@@ -228,6 +228,7 @@ A regexp matching strings of whitespace, `,' and `;'.")
 (defvar org-contacts-all-contacts nil
   "A data store variable of all contacts.")
 
+;;;###autoload
 (defun org-contacts-files ()
   "Return list of Org files to use for contact management."
   (if org-contacts-files
@@ -1496,9 +1497,7 @@ Each element has the form (NAME . (FILE . POSITION))."
         (org-contacts-files))))
 
 (setq org-contacts-all-contacts
-      (if (fboundp 'with-memoization)
-          (with-memoization org-contacts-all-contacts
-            (org-contacts--all-contacts))
+      (with-memoization org-contacts-all-contacts
         (org-contacts--all-contacts)))
 
 ;;;###autoload
