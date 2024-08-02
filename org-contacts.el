@@ -1496,7 +1496,9 @@ Each element has the form (NAME . (FILE . POSITION))."
         (org-contacts-files))))
 
 (setq org-contacts-all-contacts
-      (with-memoization org-contacts-all-contacts
+      (if (fboundp 'with-memoization)
+          (with-memoization org-contacts-all-contacts
+            (org-contacts--all-contacts))
         (org-contacts--all-contacts)))
 
 ;;;###autoload
