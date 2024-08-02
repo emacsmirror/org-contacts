@@ -1470,29 +1470,30 @@ Each element has the form (NAME . (FILE . POSITION))."
   (car (mapcar
         (lambda (file)
           (unless (buffer-live-p (get-buffer (file-name-nondirectory file)))
-            (with-current-buffer (find-file-noselect file)
-              (org-map-entries
-               (lambda ()
-                 (let* ((name (substring-no-properties (org-get-heading t t t t)))
-                        (file (buffer-file-name))
-                        (position (point))
-                        ;; extract properties Org entry headline at `position' as data API for better contacts searching.
-                        (entry-properties (org-entry-properties position 'standard))
-                        (property-name-chinese (cdr (assoc (upcase "NAME(Chinese)")  entry-properties)))
-                        (property-name-english (cdr (assoc (upcase "NAME(English)")  entry-properties)))
-                        (property-nick  (cdr (assoc "NICK" entry-properties)))
-                        (property-email (cdr (assoc "EMAIL" entry-properties)))
-                        ;; (property-mobile (cdr (assoc "MOBILE" entry-properties)))
-                        (property-wechat (cdr (assoc (upcase "WeChat") entry-properties)))
-                        (property-qq (cdr (assoc "QQ" entry-properties))))
-                   (list :name name :file file :position position
-                         :name-chinese property-name-chinese
-                         :name-english property-name-english
-                         :nick property-nick
-                         :email property-email
-                         :mobile property-email
-                         :wechat property-wechat
-                         :qq property-qq)))))))
+            (find-file-noselect file))
+          (with-current-buffer (find-file-noselect file)
+            (org-map-entries
+             (lambda ()
+               (let* ((name (substring-no-properties (org-get-heading t t t t)))
+                      (file (buffer-file-name))
+                      (position (point))
+                      ;; extract properties Org entry headline at `position' as data API for better contacts searching.
+                      (entry-properties (org-entry-properties position 'standard))
+                      (property-name-chinese (cdr (assoc (upcase "NAME(Chinese)")  entry-properties)))
+                      (property-name-english (cdr (assoc (upcase "NAME(English)")  entry-properties)))
+                      (property-nick  (cdr (assoc "NICK" entry-properties)))
+                      (property-email (cdr (assoc "EMAIL" entry-properties)))
+                      ;; (property-mobile (cdr (assoc "MOBILE" entry-properties)))
+                      (property-wechat (cdr (assoc (upcase "WeChat") entry-properties)))
+                      (property-qq (cdr (assoc "QQ" entry-properties))))
+                 (list :name name :file file :position position
+                       :name-chinese property-name-chinese
+                       :name-english property-name-english
+                       :nick property-nick
+                       :email property-email
+                       :mobile property-email
+                       :wechat property-wechat
+                       :qq property-qq))))))
         (org-contacts-files))))
 
 (setq org-contacts-all-contacts
