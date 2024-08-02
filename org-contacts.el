@@ -232,7 +232,7 @@ A regexp matching strings of whitespace, `,' and `;'.")
   "Return list of Org files to use for contact management."
   (if org-contacts-files
       org-contacts-files
-    (message "[ERROR] Your custom variable `org-contacts-files' is nil. Revert to `org-agenda-files' now.")
+    (message "[org-contacts] Your custom variable `org-contacts-files' is nil. Revert to `org-agenda-files' now.")
     (org-agenda-files t 'ifmode)))
 
 (defun org-contacts-db-need-update-p ()
@@ -881,7 +881,7 @@ This can be property key checking."
                                           (match-string 0 avatar-value))))
                       (avatar-absolute-path (file-name-concat
                                              (or org-contacts-directory
-                                                 (expand-file-name (file-name-directory (car org-contacts-files))))
+                                                 (expand-file-name (file-name-directory (car (org-contacts-files)))))
                                              avatar-link-path))
                       ( (org-file-image-p avatar-absolute-path))
                       ( (file-exists-p avatar-absolute-path)))
@@ -939,7 +939,7 @@ This can be property key checking."
 
 (defun org-contacts--return-candidates (&optional files)
   "Return `org-contacts' candidates which parsed from FILES."
-  (if-let ((files (or files org-contacts-files)))
+  (if-let ((files (or files (org-contacts-files))))
       (org-contacts--candidates files)
     (user-error "Files does not exist: %S" files)))
 
@@ -958,7 +958,7 @@ This can be property key checking."
          ;; (display-buffer buf '(display-buffer-below-selected))
          ;; (goto-char (org-find-exact-headline-in-buffer contact-name nil t))
          (org-fold-show-context))))
-   org-contacts-files))
+   (org-contacts-files)))
 
 ;;;###autoload
 (defun org-contacts (&optional files)
@@ -966,8 +966,8 @@ This can be property key checking."
   (interactive)
   (unless org-contacts--candidates-cache
     (setq org-contacts--candidates-cache
-          (org-contacts--return-candidates (or files org-contacts-files))))
-  (if-let* ((files (or files org-contacts-files))
+          (org-contacts--return-candidates (or files (org-contacts-files)))))
+  (if-let* ((files (or files (org-contacts-files)))
             ((seq-every-p 'file-exists-p files)))
       (when-let* ((candidates org-contacts--candidates-cache)
                   (minibuffer-allow-text-properties t)
