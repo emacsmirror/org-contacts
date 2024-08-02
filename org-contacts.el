@@ -730,6 +730,13 @@ Usage: (add-hook \\='completion-at-point-functions
             :company-doc-buffer #'org-contacts-org-complete--doc-function ; doc popup
             :company-location #'org-contacts-org-complete--location-function))))
 
+;;;###autoload
+(defun org-contacts-org-complete-setup ()
+  "Setup `completion-at-point-functions' with `org-contacts' in buffer local."
+  (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local))
+;;;###autoload
+(add-hook 'org-mode-hook #'org-contacts-org-complete-setup)
+
 (defun org-contacts-gnus-get-name-email ()
   "Get name and email address from Gnus message."
   (if (gnus-alive-p)
@@ -1049,17 +1056,14 @@ This adds `org-contacts-gnus-check-mail-address' and
 
 ;;;###autoload
 (defun org-contacts-setup-completion-at-point ()
-  "Add `org-contacts-message-complete-function' as a new function
-to complete the thing at point."
-  (add-to-list 'completion-at-point-functions
-               'org-contacts-message-complete-function))
+  "Add `org-contacts-message-complete-function' to capf for completing contact at point."
+  (add-to-list 'completion-at-point-functions 'org-contacts-message-complete-function nil 'local))
 
-(defun org-contacts-unload-hook ()
-  (remove-hook 'message-mode-hook #'org-contacts-setup-completion-at-point))
-
-(when (and org-contacts-enable-completion
-           (boundp 'completion-at-point-functions))
-  (add-hook 'message-mode-hook #'org-contacts-setup-completion-at-point))
+;;;###autoload
+(when (and org-contacts-enable-completion (boundp 'completion-at-point-functions))
+  (add-hook 'message-mode-hook #'org-contacts-setup-completion-at-point)
+  (when (featurep 'mu4e)
+    (add-hook 'mu4e-compose-mode-hook 'org-contacts-setup-completion-at-point)))
 
 (defun org-contacts-wl-get-from-header-content ()
   "Retrieve the content of the `From' header of an email.
