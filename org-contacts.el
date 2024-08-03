@@ -207,6 +207,15 @@ This overrides `org-email-link-description-format' if set."
 (declare-function std11-narrow-to-header "ext:std11")
 (declare-function std11-fetch-field "ext:std11")
 
+;;;###autoload
+(defun org-contacts-files ()
+  "Return list of Org files to use for contact management."
+  (if org-contacts-files
+      org-contacts-files
+    (message "[org-contacts] ERROR: Your custom variable `org-contacts-files' is nil.
+ Revert to `org-agenda-files' now.")
+    (org-agenda-files t 'ifmode)))
+
 (defconst org-contacts-property-values-separators "[,; \f\t\n\r\v]+"
   "The default value of separators for `org-contacts-split-property'.
 
@@ -228,13 +237,11 @@ A regexp matching strings of whitespace, `,' and `;'.")
 (defvar org-contacts-all-contacts nil
   "A data store variable of all contacts.")
 
-;;;###autoload
-(defun org-contacts-files ()
-  "Return list of Org files to use for contact management."
-  (if org-contacts-files
-      org-contacts-files
-    (message "[ERROR] Your custom variable `org-contacts-files' is nil. Revert to `org-agenda-files' now.")
-    (org-agenda-files t 'ifmode)))
+(defun org-contacts-all-contacts ()
+  "Return the data of all contacts."
+  (setq org-contacts-all-contacts
+	(with-memoization org-contacts-all-contacts
+          (org-contacts--all-contacts))))
 
 (defun org-contacts-db-need-update-p ()
   "Determine whether `org-contacts-db' needs to be refreshed."
@@ -648,7 +655,7 @@ See (org) Matching tags and properties for a complete description."
   (let* ((candidate (substring-no-properties candidate 1 nil))
          (contact (seq-find
                    (lambda (contact) (string-equal (plist-get contact :name) candidate))
-                   org-contacts-all-contacts))
+                   (org-contacts-all-contacts)))
          (name (plist-get contact :name))
          (file (plist-get contact :file))
          (position (plist-get contact :position))
@@ -686,7 +693,7 @@ See (org) Matching tags and properties for a complete description."
   (let* ((candidate (substring-no-properties candidate 1 nil))
          (contact (seq-find
                    (lambda (contact) (string-equal (plist-get contact :name) candidate))
-                   org-contacts-all-contacts))
+                   (org-contacts-all-contacts)))
          (name (plist-get contact :name))
          (file (plist-get contact :file))
          (position (plist-get contact :position)))
@@ -711,7 +718,7 @@ Usage: (add-hook \\='completion-at-point-functions
              (lambda (_)
                (mapcar
                 (lambda (contact) (concat "@" (plist-get contact :name)))
-                org-contacts-all-contacts)))
+                (org-contacts-all-contacts))))
 
             :predicate 'stringp
             :exclusive 'no
@@ -1210,8 +1217,8 @@ Return a org-contacts \"NICKNAME\" as property's value after completion."
                                          (propertize (format "%s " name-english) :face '(:foreground "LightSeaGreen")))
                                        (unless (or (null nick) (string-empty-p nick))
                                          (propertize (format "(%s) " nick) :face '(:foreground "LightGray"))))))))
-           org-contacts-all-contacts))
-         ;; (contact-names (mapcar (lambda (plist) (plist-get plist :name)) org-contacts-all-contacts))
+           (org-contacts-all-contacts)))
+         ;; (contact-names (mapcar (lambda (plist) (plist-get plist :name)) (org-contacts-all-contacts)))
          (contact-nick (substring-no-properties
                         (org-completing-read (or prompt "org-contacts NICKNAME: ")
                                              (append org-contacts-candidates-propertized collection
@@ -1496,10 +1503,6 @@ Each element has the form (NAME . (FILE . POSITION))."
                        :qq property-qq))))))
         (org-contacts-files))))
 
-(setq org-contacts-all-contacts
-      (with-memoization org-contacts-all-contacts
-        (org-contacts--all-contacts)))
-
 ;;;###autoload
 (defun org-contacts-link-open (query)
   "Open org-contacts: link with jumping or searching QUERY."
@@ -1528,7 +1531,7 @@ Each element has the form (NAME . (FILE . POSITION))."
       ;;                        (lambda (contact-plist)
       ;;                          (if (string-equal (plist-get contact-plist :name) query)
       ;;                              contact-plist))
-      ;;                        org-contacts-all-contacts))
+      ;;                        (org-contacts-all-contacts)))
       ;;        (contact-name (plist-get contact-entry :name))
       ;;        (file (plist-get contact-entry :file))
       ;;        (position (plist-get contact-entry :position))
@@ -1543,7 +1546,7 @@ Each element has the form (NAME . (FILE . POSITION))."
   (let ((name (completing-read "org-contacts NAME: "
                                (mapcar
                                 (lambda (plist) (plist-get plist :name))
-                                org-contacts-all-contacts))))
+                                (org-contacts-all-contacts)))))
     (concat "org-contact:" name)))
 
 (defun org-contacts-link-face (path)
@@ -1586,7 +1589,7 @@ Each element has the form (NAME . (FILE . POSITION))."
              (ignore name)
              ;; (cons name email)
              email))
-         org-contacts-all-contacts))
+         (org-contacts-all-contacts)))
   ;; clean nil and empty string "" from result.
   (delete ""
           (delete nil org-contacts-emails-list)))
