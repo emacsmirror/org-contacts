@@ -864,7 +864,7 @@ This function should be called from `gnus-article-prepare-hook'."
     ,org-contacts-birthday-property)
   "Matching rule for finding heading that are contacts.
 This can be property key checking."
-  :type 'list
+  :type '(repeat symbol)
   :safe 'listp)
 
 (defvar org-contacts-ahead-space-padding (make-string 5 ? )
