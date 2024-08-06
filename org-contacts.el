@@ -1059,7 +1059,7 @@ This adds `org-contacts-gnus-check-mail-address' and
 ;;;###autoload
 (defun org-contacts-setup-completion-at-point ()
   "Add `org-contacts-message-complete-function' to capf for completing contact at point."
-  (add-to-list 'completion-at-point-functions 'org-contacts-message-complete-function nil 'local))
+  (add-hook 'completion-at-point-functions 'org-contacts-message-complete-function nil 'local))
 
 (when (and org-contacts-enable-completion (boundp 'completion-at-point-functions))
   (add-hook 'message-mode-hook #'org-contacts-setup-completion-at-point)
