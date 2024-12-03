@@ -143,7 +143,7 @@ The following replacements are available:
   "Name of the property for IRC nickname match."
   :type 'string)
 
-(defcustom org-contacts-icon-size 32
+(defcustom org-contacts-icon-size 64
   "Size of the contacts icons."
   :type 'string)
 
