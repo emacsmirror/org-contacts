@@ -844,7 +844,7 @@ This function should be called from `gnus-article-prepare-hook'."
 
 (defun org-contacts-icon-as-string ()
   "Return the contact icon as a string."
-  (let ((image (org-contacts-get-icon)))
+  (let ((image (org-contacts-get-avatar-icon)))
     (concat
      (propertize "-" 'display
                  (append
@@ -1126,8 +1126,8 @@ address."
           (error (format "This contact has no mail address set (no %s property)"
                          org-contacts-email-property)))))))
 
-(defun org-contacts-get-icon (&optional pom)
-  "Get icon for contact at POM."
+(defun org-contacts-get-avatar-icon (&optional pom)
+  "Get icon for contact at POM and return the avatar icon image object."
   (setq pom (or pom (point)))
   (catch 'icon
     ;; Use `org-contacts-icon-property'
