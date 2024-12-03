@@ -310,6 +310,24 @@ buffer."
         (progress-reporter-done progress-reporter)))
     org-contacts-db))
 
+(defun org-contacts-search-contact (name)
+  "Search contact NAME in cached database and return org element POM."
+  (let (epom)
+    (dolist (contact (org-contacts-all-contacts) epom)
+      (when (string-equal (plist-get contact :name) name)
+        (with-current-buffer (find-file-noselect (expand-file-name (car org-contacts-files)))
+          (or (save-excursion
+                (goto-char (plist-get contact :position))
+                (setq epom (org-element-context)))
+              (progn
+                (org-goto-marker-or-bmk (org-find-exact-headline-in-buffer name))
+                (setq epom (org-element-context)))))))
+    epom))
+
+;;; TEST:
+;; (org-contacts-search-contact "stardiviner")
+;; (org-element-property :title (org-contacts-search-contact "stardiviner"))
+
 (defun org-contacts-at-point (&optional pom)
   "Return the contacts at point or marker POM or current position."
   (setq pom (or pom (point)))
@@ -1436,7 +1454,7 @@ are effectively trimmed.  If nil, all zero-length substrings are retained."
     (cdr (reverse proplist))))
 
 
-;; Add an Org link type `org-contact:' for easy jump to or searching org-contacts headline.
+;;; Add an Org link type `org-contact:' for easy jump to or searching org-contacts headline.
 ;; link spec: [[org-contact:query][desc]]
 ;;;###autoload
 (if (fboundp 'org-link-set-parameters)
