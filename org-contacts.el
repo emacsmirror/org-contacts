@@ -869,7 +869,7 @@ This function should be called from `gnus-article-prepare-hook'."
                   (if image
                       image
                     `'(space :width (,org-contacts-icon-size)))
-                  '(:ascent center)))
+                  '(:ascent 100)))
      " ")))
 
 ;;====================================== org-contacts searching =====================================
@@ -1171,10 +1171,8 @@ address."
       (when image-path
         (throw 'icon
                (if (featurep 'imagemagick)
-                   (create-image image-path 'imagemagick nil
-                                 :height org-contacts-icon-size)
-                 (create-image image-path nil nil
-                               :height org-contacts-icon-size)))))
+                   (create-image image-path 'imagemagick nil :ascent 100 :height org-contacts-icon-size)
+                 (create-image image-path nil nil :ascent 100 :height org-contacts-icon-size)))))
     ;; Next, try Gravatar
     (when org-contacts-icon-use-gravatar
       (defvar gravatar-size)
