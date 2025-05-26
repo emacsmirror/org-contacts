@@ -977,7 +977,7 @@ This can be property key checking."
       (let ((candidates nil))
         (org-element-map (org-element-parse-buffer 'headline) 'headline
           (lambda (headline)
-            (when-let ((candidate (org-contacts--candidate headline)))
+            (when-let* ((candidate (org-contacts--candidate headline)))
               (push candidate candidates))))
         (nreverse candidates)))))
 
@@ -988,7 +988,7 @@ This can be property key checking."
 
 (defun org-contacts--return-candidates (&optional files)
   "Return `org-contacts' candidates which parsed from FILES."
-  (if-let ((files (or files org-contacts-files)))
+  (if-let* ((files (or files org-contacts-files)))
       (org-contacts--candidates files)
     (user-error "Files does not exist: %S" files)))
 
@@ -1182,7 +1182,7 @@ address."
             "\\[\\[\\([^]]*\\)\\]\\(\\[\\(.*\\)\\]\\)?\\]")
            (contacts-dir (file-name-directory (car (org-contacts-files))))
            (image-path
-            (if-let ((avatar (org-entry-get pom org-contacts-icon-property)))
+            (if-let* ((avatar (org-entry-get pom org-contacts-icon-property)))
                 (cond
                  ;; [[file:dir/filename.png]]
                  ((string-match-p "\\[\\[.*\\]\\]" avatar)
@@ -1564,7 +1564,7 @@ Each element has the form (NAME . (FILE . POSITION))."
      ;; jump to exact contact headline directly
      (t
       (with-current-buffer buf
-        (if-let ((position (org-find-exact-headline-in-buffer query)))
+        (if-let* ((position (org-find-exact-headline-in-buffer query)))
             (progn
               (goto-char (marker-position position))
               (org-fold-show-context))
@@ -1623,7 +1623,7 @@ Each element has the form (NAME . (FILE . POSITION))."
                            (with-current-buffer org-contacts-buffer
                              (goto-char position)
                              ;; (symbol-name (org-property-or-variable-value 'EMAIL))
-                             (when-let ((pvalue (org-entry-get (point) "EMAIL")))
+                             (when-let* ((pvalue (org-entry-get (point) "EMAIL")))
                                ;; handle `mailto:' link. e.g. "[[mailto:yantar92@posteo.net]]", "[[mailto:yantar92@posteo.net][yantar92@posteo.net]]"
                                ;; Reference the testing file `test-org-contacts.el'.
                                (if (string-match
