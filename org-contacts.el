@@ -898,19 +898,42 @@ This can be property key checking."
          (avatar-image-path
           (when-let* ((avatar-value (org-entry-get headline "AVATAR"))
                       (avatar-link-path (cond
-                                         ;; [[file:contact_dir/avatar.png]]
+                                         ;; bracket link: [[file:contact dir/avatar image.png]]
+                                         ;; TEST:
+                                         ;; (when (string-match org-link-bracket-re "[[file:contact_dir/avatar image.png]]")
+                                         ;;   (match-string 1 "[[file:contact_dir/avatar image.png]]"))
+                                         ;; (when (string-match org-link-bracket-re "[[attachment:avatar image.png]]")
+                                         ;;   (match-string 1 "[[attachment:avatar image.png]]"))
+                                         ;; (when (string-match org-link-bracket-re "[[file:contact_dir/avatar image.png]]")
+                                         ;;   (when-let* ((link-internal (match-string 1 "[[file:contact_dir/avatar image.png]]"))
+                                         ;;               (_ (string-match "\\([file\\|attachment]\\):\\(.*\\)" link-internal)))
+                                         ;;     (match-string 2 link-internal)))
+                                         ((or (string-match org-link-bracket-re avatar-value)
+                                              (string-match org-link-any-re avatar-value))
+                                          (when-let* ((link-internal (or (match-string 1 avatar-value) (match-string 2 avatar-value)))
+                                                      (_ (and (or (string-prefix-p "file:" link-internal)
+                                                                  (string-prefix-p "attachment:" link-internal))
+                                                              (seq-some
+                                                               (lambda (image-extension) (string-suffix-p image-extension link-internal))
+                                                               image-file-name-extensions))))
+                                            (when (string-match "\\([file\\|attachment]\\):\\(.*\\)" link-internal)
+                                              (match-string 2 link-internal))))
+                                         ;; plain link: file:/path/to/image.jpg
+                                         ;; TEST:
+                                         ;; (when (string-match org-link-plain-re "file:/path/to/image.jpg")
+                                         ;;   (match-string 1 "file:/path/to/image.jpg")
+                                         ;;   (match-string 2 "file:/path/to/image.jpg"))
                                          ((string-match org-link-plain-re avatar-value)
-                                          (when (string-equal (match-string 1 avatar-value) "file")
-                                            (match-string 2 avatar-value)))
-                                         ;; contact-name.jpg
+                                          (match-string 2 avatar-value))
+                                         ;; just file-name: contact-name.jpg
                                          ((string-match (concat (regexp-opt image-file-name-extensions) (rx line-end)) avatar-value)
                                           (match-string 0 avatar-value))))
                       (avatar-absolute-path (file-name-concat
                                              (or org-contacts-directory
                                                  (expand-file-name (file-name-directory (car org-contacts-files))))
                                              avatar-link-path))
-                      ( (org-file-image-p avatar-absolute-path))
-                      ( (file-exists-p avatar-absolute-path)))
+                      (_ (org-file-image-p avatar-absolute-path))
+                      (_ (file-exists-p avatar-absolute-path)))
             avatar-absolute-path))
          (info (concat "\n"
                        (concat org-contacts-ahead-space-padding "   ")
