@@ -986,20 +986,26 @@ This can be property key checking."
   (concat (propertize " " 'display '(space :align-to center))
           (get-text-property 0 'annotation candidate)))
 
-(defun org-contacts--return-candidates (&optional files)
+(defun org-contacts--candidates-return (&optional files)
   "Return `org-contacts' candidates which parsed from FILES."
   (if-let* ((files (or files org-contacts-files)))
       (org-contacts--candidates files)
     (user-error "Files does not exist: %S" files)))
 
-(defvar org-contacts--candidates-cache nil
-  "A cache variable of `org-contacts--candidates'.")
+(defvar org-contacts--candidates-cache-list nil
+  "A cache variable of `org-contacts--candidates' list.")
 
-(defun org-contacts-cache-reset ()
-  "Reset `org-contacts--candidates-cache'."
+(defun org-contacts--candidates-cache-reset ()
+  "Reset `org-contacts--candidates-cache-list'."
   (interactive)
   (setq org-contacts-all-contacts nil)
-  (setq org-contacts--candidates-cache nil))
+  (setq org-contacts--candidates-cache-list nil))
+
+(defun org-contacts--candidates-cache-setting (&optional files)
+  "Cache the internal variable `org-contacts--candidates-cache-list' of org-contacts candidates."
+  (if (null org-contacts--candidates-cache-list)
+      (setq org-contacts--candidates-cache-list (org-contacts--candidates-return (or files org-contacts-files)))
+    org-contacts--candidates-cache-list))
 
 (defun org-contacts-browse-function (contact-name)
   "Jump to CONTACT-NAME headline."
@@ -1020,12 +1026,10 @@ This can be property key checking."
 (defun org-contacts (&optional files)
   "Search `org-contacts' from FILES and jump to contact location."
   (interactive)
-  (unless org-contacts--candidates-cache
-    (setq org-contacts--candidates-cache
-          (org-contacts--return-candidates (or files org-contacts-files))))
+  (org-contacts--candidates-cache-setting files)
   (if-let* ((files (or files org-contacts-files))
             ((seq-every-p 'file-exists-p files)))
-      (when-let* ((candidates org-contacts--candidates-cache)
+      (when-let* ((candidates org-contacts--candidates-cache-list)
                   (minibuffer-allow-text-properties t)
                   (completion-extra-properties
                    (list :category 'org-contacts
