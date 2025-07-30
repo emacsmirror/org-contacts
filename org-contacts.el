@@ -185,9 +185,9 @@ This overrides `org-email-link-description-format' if set."
   "Default file for vcard export."
   :type 'file)
 
-(defcustom org-contacts-enable-completion t
+(defcustom org-contacts-completion-enabled-mode-list '(org-mode message-mode mu4e-compose-mode)
   "Enable or not the completion in `message-mode' with `org-contacts'."
-  :type 'boolean)
+  :type '(repeat symbol))
 
 (defcustom org-contacts-complete-functions
   '(org-contacts-complete-group org-contacts-complete-tags-props org-contacts-complete-name)
@@ -774,7 +774,8 @@ Usage: (add-hook \\='completion-at-point-functions
 ;;;###autoload
 (defun org-contacts-org-complete-setup ()
   "Setup `completion-at-point-functions' with `org-contacts' in buffer local."
-  (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local))
+  (when (member major-mode org-contacts-completion-enabled-mode-list)
+    (add-hook 'completion-at-point-functions 'org-contacts-org-complete-function nil 'local)))
 ;;;###autoload
 (add-hook 'org-mode-hook #'org-contacts-org-complete-setup)
 
@@ -1132,14 +1133,14 @@ This adds `org-contacts-gnus-check-mail-address' and
   (add-hook 'gnus-article-prepare-hook #'org-contacts-gnus-store-last-mail))
 
 ;;;###autoload
-(defun org-contacts-setup-completion-at-point ()
+(defun org-contacts-email-setup-completion-at-point ()
   "Add `org-contacts-message-complete-function' to capf for completing contact at point."
-  (add-hook 'completion-at-point-functions 'org-contacts-message-complete-function nil 'local))
+  (when (member major-mode org-contacts-completion-enabled-mode-list)
+    (add-hook 'completion-at-point-functions 'org-contacts-message-complete-function nil 'local)))
 
-(when (and org-contacts-enable-completion (boundp 'completion-at-point-functions))
-  (add-hook 'message-mode-hook #'org-contacts-setup-completion-at-point)
-  (when (featurep 'mu4e)
-    (add-hook 'mu4e-compose-mode-hook 'org-contacts-setup-completion-at-point)))
+(add-hook 'message-mode-hook #'org-contacts-email-setup-completion-at-point)
+(when (featurep 'mu4e)
+  (add-hook 'mu4e-compose-mode-hook 'org-contacts-email-setup-completion-at-point))
 
 (defun org-contacts-wl-get-from-header-content ()
   "Retrieve the content of the `From' header of an email.
