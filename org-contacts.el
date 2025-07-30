@@ -686,10 +686,10 @@ See (org) Matching tags and properties for a complete description."
                                  ((org-at-block-p)
                                   (org-narrow-to-block))
                                  (t (org-narrow-to-subtree)))
-                                (let ((content (buffer-substring (point-min) (point-max))))
+                                (let ((content (buffer-substring-no-properties (point-min) (point-max))))
                                   (when (buffer-narrowed-p) (widen))
                                   content))))))
-    contact-content))
+    (cons name contact-content)))
 
 ;; TEST:
 ;; (setq org-contacts--candidates-complete-doc-cache nil)
@@ -702,28 +702,46 @@ See (org) Matching tags and properties for a complete description."
   "Generate cache for contact candidates completion doc."
   (if (null org-contacts--candidates-complete-doc-cache)
       (let* ((candidates (org-contacts--candidates-cache-setting))
-             (candidates-complete-doc-list (mapcar
-                                            (lambda (candidate)
-                                              (cons candidate (org-contacts--candidates-org-complete-get-doc candidate)))
-                                            candidates)))
+             (candidates-complete-doc-list
+              (mapcar
+               (lambda (candidate)
+                 (org-contacts--candidates-org-complete-get-doc candidate))
+               candidates)))
         (setq org-contacts--candidates-complete-doc-cache candidates-complete-doc-list))
     org-contacts--candidates-complete-doc-cache))
 
+;; TEST:
+;; (let* ((candidate (car (org-contacts--candidates-complete-doc-cache-setting)))
+;;        (name (car candidate)))
+;;   ;; (pp candidate)
+;;   ;; (type-of candidate)
+;;   (print name)
+;;   (princ (text-properties-at 0 (cdr candidate)))
+;;   (get-text-property 0 'contact-name (cdr candidate))
+;;   (get-text-property 0 'annotation (cdr candidate)))
+;;
+;; (cdr (assoc "stardiviner" (org-contacts--candidates-complete-doc-cache-setting)))
+
 (defun org-contacts-org-complete--doc-function (candidate)
   "Populates *org-contact* with the documentation for the content of contact CANDIDATE."
-  (let ((doc (alist-get candidate (org-contacts--candidates-complete-doc-cache-setting)))
-        (doc-buffer (get-buffer-create " *org-contact*")))
+  (let* ((name (substring-no-properties candidate 1 nil))
+         (contact (seq-find
+                   (lambda (contact) (string-equal (plist-get contact :name) name))
+                   (org-contacts-all-contacts)))
+         (contact-content (cdr (assoc name (org-contacts--candidates-complete-doc-cache-setting))))
+         (doc-buffer (get-buffer-create " *org-contact*")))
     (with-current-buffer doc-buffer
       (read-only-mode 1)
       (let ((inhibit-read-only t))
         (erase-buffer)
-        (insert doc)
+        (insert contact-content)
         (org-mode)
         (org-fold-show-all)
         (font-lock-ensure))
       (current-buffer))))
 
 ;; TEST:
+;; (org-contacts-org-complete--doc-function "@stardiviner")
 ;; (org-contacts-org-complete--doc-function (car org-contacts--candidates-cache-list))
 ;; (benchmark 1 '(alist-get (car org-contacts--candidates-cache-list) (org-contacts--candidates-complete-doc-cache-setting)))
 ;; (benchmark 1 '(org-contacts-org-complete--doc-function (nth 10 org-contacts--candidates-cache-list)))
