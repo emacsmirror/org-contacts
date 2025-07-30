@@ -749,6 +749,9 @@ See (org) Matching tags and properties for a complete description."
 ;; display company-mode doc buffer bellow current window.
 (add-to-list 'display-buffer-alist '("^ \\*org-contact\\*" . (display-buffer-below-selected)))
 
+(defun org-contacts-org-complete--exit-function (candidate)
+  (message "org-contacts: %s" (get-text-property 0 'contact-name candidate)))
+
 (defun org-contacts-org-complete--location-function (candidate)
   "Return `org-contacts' location of contact CANDIDATE."
   (let* ((candidate (substring-no-properties candidate 1 nil))
@@ -784,7 +787,8 @@ Usage: (add-hook \\='completion-at-point-functions
             :exclusive 'no
             ;; properties check out `completion-extra-properties'
             :annotation-function #'org-contacts-org-complete--annotation-function
-            ;; :exit-function ; TODO change completion candidate inserted contact name into org-contact link??
+            ;; TODO: change completion candidate inserted contact name into org-contact link
+            :exit-function #'org-contacts-org-complete--exit-function
             :company-docsig #'identity                                    ; metadata
             :company-doc-buffer #'org-contacts-org-complete--doc-function ; doc popup
             :company-location #'org-contacts-org-complete--location-function))))
