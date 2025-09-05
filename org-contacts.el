@@ -331,7 +331,7 @@ buffer."
                 (goto-char (plist-get contact :position))
                 (setq epom (org-element-context)))
               (progn
-                (org-goto-marker-or-bmk (org-find-exact-headline-in-buffer name))
+                (org-goto-marker-or-bmk (org-find-exact-headline-in-buffer name (current-buffer)))
                 (setq epom (org-element-context)))))))
     epom))
 
@@ -1098,11 +1098,11 @@ This can be property key checking."
      (let ((buf (find-file-noselect (expand-file-name file))))
        (with-current-buffer buf
          ;; NOTE: `org-goto-marker-or-bmk' will display buffer in current window, not follow `display-buffer' rule.
-         (when-let* ((found-contact (org-find-exact-headline-in-buffer contact-name)))
+         (when-let* ((found-contact (org-find-exact-headline-in-buffer contact-name buf)))
            (org-goto-marker-or-bmk found-contact)
            ;; FIXME: `goto-char' not physically move point in buffer.
            ;; (display-buffer buf '(display-buffer-below-selected))
-           ;; (goto-char (org-find-exact-headline-in-buffer contact-name nil t))
+           ;; (goto-char (org-find-exact-headline-in-buffer contact-name buf :pos-only))
            (org-fold-show-context)))))
    org-contacts-files))
 
@@ -1655,9 +1655,9 @@ Each element has the form (NAME . (FILE . POSITION))."
      ;; jump to exact contact headline directly
      (t
       (with-current-buffer buf
-        (if-let* ((position (org-find-exact-headline-in-buffer query)))
+        (if-let* ((marker (org-find-exact-headline-in-buffer query buf)))
             (progn
-              (goto-char (marker-position position))
+              (org-goto-marker-or-bmk marker)
               (org-fold-show-context))
           (user-error "[org-contacts] Can't find <%s> in your `org-contacts-files'" query)))
       (display-buffer buf '(display-buffer-below-selected))
