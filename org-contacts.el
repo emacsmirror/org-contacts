@@ -932,11 +932,14 @@ This function should be called from `gnus-article-prepare-hook'."
 ;;====================================== org-contacts searching =====================================
 
 (defcustom org-contacts-identity-properties-list
-  `(,org-contacts-email-property
-    ,org-contacts-alias-property
-    ,org-contacts-tel-property
-    ,org-contacts-address-property
-    ,org-contacts-birthday-property)
+  (list org-contacts-icon-property
+        org-contacts-name-property
+        org-contacts-nickname-property
+        org-contacts-alias-property
+        org-contacts-email-property
+        org-contacts-tel-property
+        org-contacts-address-property
+        org-contacts-birthday-property)
   "Matching rule for finding heading that are contacts.
 This can be property key checking."
   :type '(repeat symbol)
