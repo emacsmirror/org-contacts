@@ -140,7 +140,7 @@ The following replacements are available:
   :type 'string)
 
 (defcustom org-contacts-nickname-property "NICKNAME"
-  "Name of the property for IRC nickname match."
+  "Name of the property for nickname match."
   :type 'string)
 
 (defcustom org-contacts-icon-size 64
@@ -193,6 +193,10 @@ This overrides `org-email-link-description-format' if set."
   '(org-contacts-complete-group org-contacts-complete-tags-props org-contacts-complete-name)
   "List of functions used to complete contacts in `message-mode'."
   :type 'hook)
+
+(defcustom org-contacts-irc-nickname-property "IRC_NICKNAME"
+  "Name of the property for IRC nickname match."
+  :type 'string)
 
 ;; Decalre external functions and variables
 (declare-function org-reverse-string "org")
@@ -1292,7 +1296,7 @@ address."
 (defun org-contacts-irc-buffer (&optional pom)
   "Get the IRC buffer associated with the entry at POM."
   (setq pom (or pom (point)))
-  (let ((nick (org-entry-get pom org-contacts-nickname-property)))
+  (let ((nick (org-entry-get pom org-contacts-irc-nickname-property)))
     (when nick
       (let ((buffer (get-buffer nick)))
         (when buffer
