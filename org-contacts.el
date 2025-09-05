@@ -139,6 +139,10 @@ The following replacements are available:
   "Name of the property for contact icon."
   :type 'string)
 
+(defcustom org-contacts-name-property "NAME"
+  "Name of the property for name match."
+  :type 'string)
+
 (defcustom org-contacts-nickname-property "NICKNAME"
   "Name of the property for nickname match."
   :type 'string)
@@ -167,6 +171,7 @@ The following replacements are available:
   (string-join
    (mapcar (lambda (x) (concat x "<>\"\""))
            (list org-contacts-icon-property
+                 org-contacts-name-property
                  org-contacts-nickname-property
                  org-contacts-alias-property
                  org-contacts-email-property
