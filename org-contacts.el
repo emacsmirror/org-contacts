@@ -164,14 +164,16 @@ The following replacements are available:
   :type 'string)
 
 (defcustom org-contacts-matcher
-  (mapconcat #'identity
-             (mapcar (lambda (x) (concat x "<>\"\""))
-                     (list org-contacts-email-property
-                           org-contacts-alias-property
-                           org-contacts-tel-property
-                           org-contacts-address-property
-                           org-contacts-birthday-property))
-             "|")
+  (string-join
+   (mapcar (lambda (x) (concat x "<>\"\""))
+           (list org-contacts-icon-property
+                 org-contacts-nickname-property
+                 org-contacts-alias-property
+                 org-contacts-email-property
+                 org-contacts-tel-property
+                 org-contacts-address-property
+                 org-contacts-birthday-property))
+   "|")
   "Matching rule for finding heading that are contacts.
 This can be a tag name, or a property check."
   :type 'string)
