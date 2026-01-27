@@ -1414,9 +1414,7 @@ to do our best."
          (bday (org-contacts-vcard-escape (cdr (assoc-string org-contacts-birthday-property properties))))
          (addr (cdr (assoc-string org-contacts-address-property properties)))
          (nick (org-contacts-vcard-escape (cdr (assoc-string org-contacts-nickname-property properties))))
-         (categories (mapconcat (lambda (str) (concat "" str))
-                                (delq "" (string-split (string-trim (cdr (assoc-string "TAGS" properties)) ":" ":") ":"))
-                                ","))
+         (categories (delq "" (org-split-string (alist-get "TAGS" properties "" nil #'string=) ":")))
          (head (format "BEGIN:VCARD\nVERSION:3.0\nN:%s\nFN:%s\n" n name))
          emails-list result phones-list)
     (concat
@@ -1451,7 +1449,7 @@ to do our best."
                  (calendar-extract-month cal-bday)
                  (calendar-extract-day cal-bday))))
      (when nick (format "NICKNAME:%s\n" nick))
-     (when categories (format "CATEGORIES:%s\n" categories))
+     (when categories (format "CATEGORIES:%s\n" (string-join categories ",")))
      (when note (format "NOTE:%s\n" note))
      "END:VCARD\n\n")))
 
