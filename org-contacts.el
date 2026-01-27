@@ -93,6 +93,10 @@ When set to nil, all your Org files will be used."
 When set to nil, all your Org files will be used."
   :type '(repeat file))
 
+(defcustom org-contacts-id-property "ID"
+  "Name of the property for contact ID."
+  :type 'string)
+
 (defcustom org-contacts-email-property "EMAIL"
   "Name of the property for contact email address."
   :type 'string)
@@ -1400,6 +1404,7 @@ to do our best."
   (let* ((properties (nth 2 contact))
          (name (org-contacts-vcard-escape (car contact)))
          (n (org-contacts-vcard-encode-name name))
+         (id (cdr (assoc-string org-contacts-id-property properties)))
          (email (cdr (assoc-string org-contacts-email-property properties)))
          (tel (cdr (assoc-string org-contacts-tel-property properties)))
          (ignore-list (cdr (assoc-string org-contacts-ignore-property properties)))
@@ -1416,6 +1421,8 @@ to do our best."
          emails-list result phones-list)
     (concat
      head
+     (when id
+       (format "UID:urn:uuid:%s\n" id))
      (when email
        (progn
          (setq emails-list (org-contacts-remove-ignored-property-values
