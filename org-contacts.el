@@ -833,9 +833,8 @@ Usage: (add-hook \\='completion-at-point-functions
                  #\\='org-contacts-complete-contact nil \\='local)"
   (when-let* ((end (point))
               (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
-              (symbol (buffer-substring-no-properties begin end))
-              (org-contacts-prefix-p (string-prefix-p "@" symbol)))
-    (when org-contacts-prefix-p
+              (symbol (buffer-substring-no-properties begin end)))
+    (when (string-prefix-p "@" symbol)
       (list begin
             end
             (completion-table-dynamic
