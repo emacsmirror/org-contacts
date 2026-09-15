@@ -77,6 +77,8 @@
 (declare-function diary-anniversary "diary-lib" (month day &optional year mark))
 (declare-function erc-server-buffer-live-p "erc" ())
 (declare-function erc-server-process-alive "erc" (&optional buffer))
+(declare-function nerd-icons-mdicon "nerd-icons" (&rest args))
+(declare-function org-link-beautify-iconify "org-link-beautify" (ov path link))
 (defvar erc-server-processing-p)
 
 (defgroup org-contacts nil
@@ -1785,7 +1787,9 @@ are effectively trimmed.  If nil, all zero-length substrings are retained."
   "Load org-contacts capture template into `org-capture-templates'."
   (add-to-list 'org-capture-templates
                `("C" ,(format "%s\tRecord contact -> 'Contacts.org'"
-                              (nerd-icons-mdicon "nf-md-card_account_details" :face 'nerd-icons-blue))
+                              (if (featurep 'nerd-icons)
+                                  (nerd-icons-mdicon "nf-md-card_account_details" :face 'nerd-icons-blue)
+                                "⨝"))
                  entry (file ,(expand-file-name (car org-contacts-files)))
                  "\
 * %^{NAME}\t\t\t\t%^g
