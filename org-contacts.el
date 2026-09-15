@@ -308,10 +308,10 @@ Each element has the form (NAME . (FILE . POSITION))."
 (defun org-contacts-all-contacts ()
   "Return the data of all contacts."
   (if org-contacts-all-contacts
-      (setq org-contacts-all-contacts
-            (with-memoization org-contacts-all-contacts
-              (org-contacts--all-contacts)))
-    org-contacts-all-contacts))
+      org-contacts-all-contacts
+    (setq org-contacts-all-contacts
+          (with-memoization org-contacts-all-contacts
+            (org-contacts--all-contacts)))))
 
 (defun org-contacts-db-need-update-p ()
   "Determine whether `org-contacts-db' needs to be refreshed."
@@ -843,6 +843,8 @@ See (org) Matching tags and properties for a complete description."
   "`completion-at-point' function to complete @name in `org-mode'.
 Usage: (add-hook \\='completion-at-point-functions
                  #\\='org-contacts-complete-contact nil \\='local)"
+  (unless org-contacts-all-contacts
+    (org-contacts-all-contacts))
   (when-let* ((end (point))
               (begin (save-excursion (skip-chars-backward "[:alnum:]@") (point)))
               (symbol (buffer-substring-no-properties begin end)))
