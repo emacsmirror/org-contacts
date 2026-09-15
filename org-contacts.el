@@ -297,9 +297,11 @@ Each element has the form (NAME . (FILE . POSITION))."
 
 (defun org-contacts-all-contacts ()
   "Return the data of all contacts."
-  (setq org-contacts-all-contacts
-	      (with-memoization org-contacts-all-contacts
-          (org-contacts--all-contacts))))
+  (if org-contacts-all-contacts
+      (setq org-contacts-all-contacts
+            (with-memoization org-contacts-all-contacts
+              (org-contacts--all-contacts)))
+    org-contacts-all-contacts))
 
 (defun org-contacts-db-need-update-p ()
   "Determine whether `org-contacts-db' needs to be refreshed."
